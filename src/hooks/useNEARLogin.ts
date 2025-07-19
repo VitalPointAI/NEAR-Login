@@ -84,6 +84,7 @@ export const useNEARLogin = (): UseNEARLogin => {
     }
   }, [refreshStakingInfo]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleInitialize = useCallback(async (config: any) => {
     try {
       await initialize(config);

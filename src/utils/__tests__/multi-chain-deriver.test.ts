@@ -50,6 +50,7 @@ jest.mock('bech32', () => ({
 
 describe('MultiChainAddressDeriver', () => {
   let deriver: MultiChainAddressDeriver;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockChainSignatureContract: any;
   let mockConfig: ChainSignatureConfig;
 
@@ -164,6 +165,7 @@ describe('MultiChainAddressDeriver', () => {
     const mockPublicKeyEd25519 = '1111111111111111111111111111111211111111111111111111111111111112';
     
     mockChainSignatureContract.getDerivedPublicKey
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .mockImplementation((params: any) => {
         if (params.isEd25519) {
           return Promise.resolve(mockPublicKeyEd25519);
@@ -279,6 +281,7 @@ describe('MultiChainAddressDeriver', () => {
   });
 
   it('should throw error for unsupported chain', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await expect(deriver.deriveAddress('test.testnet', 'unsupported' as any))
       .rejects.toThrow('Chain unsupported is not configured');
   });

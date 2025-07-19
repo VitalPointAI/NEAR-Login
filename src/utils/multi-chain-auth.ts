@@ -266,6 +266,7 @@ export class MultiChainAuthManager {
         keyType,
         signerAccount: {
           accountId: nearAccount,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           signAndSendTransactions: (args: any) => wallet.signAndSendTransactions(args),
         },
       });
@@ -310,6 +311,7 @@ export class MultiChainAuthManager {
     chains: SupportedChain[],
     options: Partial<ChainSignatureOptions> = {}
   ): Promise<Record<SupportedChain, ChainSignatureResult>> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results: Record<SupportedChain, ChainSignatureResult> = {} as any;
 
     // Sign messages sequentially to avoid overwhelming the MPC network

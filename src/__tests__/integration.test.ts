@@ -10,6 +10,7 @@ import type {
 // Mock NEAR components
 const mockNear = {
   account: jest.fn(),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 const mockSelector = {
@@ -18,6 +19,7 @@ const mockSelector = {
     getAccounts: jest.fn().mockResolvedValue([{ accountId: 'test.testnet' }]),
   }),
   isSignedIn: jest.fn().mockReturnValue(true),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe('Multi-Chain Authentication Integration Tests', () => {

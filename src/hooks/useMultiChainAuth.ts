@@ -98,13 +98,6 @@ export function useMultiChainAuth({
     );
   }, [config, near, selector, enableNotifications]);
 
-  // Auto-initialize on mount
-  useEffect(() => {
-    if (autoConnect && !state.isInitialized && !state.isConnecting) {
-      initialize();
-    }
-  }, [autoConnect, state.isInitialized, state.isConnecting]);
-
   // Initialize the authentication system
   const initialize = useCallback(async () => {
     try {
@@ -114,6 +107,13 @@ export function useMultiChainAuth({
       console.error('Failed to initialize multi-chain auth:', err);
     }
   }, [authManager]);
+
+  // Auto-initialize on mount
+  useEffect(() => {
+    if (autoConnect && !state.isInitialized && !state.isConnecting) {
+      initialize();
+    }
+  }, [autoConnect, state.isInitialized, state.isConnecting, initialize]);
 
   // Connect to a specific chain
   const connectChain = useCallback(async (chain: SupportedChain, customPath?: string) => {
@@ -180,17 +180,17 @@ export function useMultiChainAuth({
   // Get address for a specific chain
   const getChainAddress = useCallback((chain: SupportedChain) => {
     return authManager.getChainAddress(chain);
-  }, [authManager, state.connectedChains]);
+  }, [authManager]);
 
   // Get signature for a specific chain
   const getChainSignature = useCallback((chain: SupportedChain) => {
     return authManager.getChainSignature(chain);
-  }, [authManager, state.signatures]);
+  }, [authManager]);
 
   // Check if a specific chain is authenticated
   const isChainAuthenticated = useCallback((chain: SupportedChain) => {
     return authManager.isChainAuthenticated(chain);
-  }, [authManager, state.signatures]);
+  }, [authManager]);
 
   // Logout and clear all authentication
   const logout = useCallback(async () => {
@@ -216,7 +216,7 @@ export function useMultiChainAuth({
 
   const isAuthenticated = useMemo(() => {
     return authManager.isAuthenticated();
-  }, [authManager, state.signatures]);
+  }, [authManager]);
 
   // Request notification permissions on mount
   useEffect(() => {
@@ -284,6 +284,7 @@ export function useSimpleMultiChainAuth(
     chainSignature: {
       contractId,
       networkId,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       supportedChains: {} as Record<SupportedChain, any>,
       derivationPaths: {} as Record<SupportedChain, string>,
     },

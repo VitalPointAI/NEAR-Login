@@ -124,7 +124,7 @@ function App() {
         <label>Authentication Mode: </label>
         <select 
           value={mode} 
-          onChange={(e) => setMode(e.target.value as any)}
+          onChange={(e) => setMode(e.target.value as 'wallet' | 'optional' | 'required')}
           style={{ marginLeft: '10px', padding: '5px' }}
         >
           <option value="wallet">Wallet Only</option>

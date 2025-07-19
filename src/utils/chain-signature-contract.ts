@@ -13,7 +13,7 @@ export interface SignArgs {
   keyType: 'Ecdsa' | 'Eddsa';
   signerAccount: {
     accountId: string;
-    signAndSendTransactions: (args: any) => Promise<any>;
+    signAndSendTransactions: (args: unknown) => Promise<unknown>;
   };
 }
 

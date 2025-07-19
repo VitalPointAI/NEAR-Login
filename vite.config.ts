@@ -14,7 +14,6 @@ export default defineConfig(({ mode }: any) => ({
       exclude: ['src/examples/**/*', 'src/**/*.stories.*', 'src/**/*.test.*']
     }),
   ],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   build: mode === 'lib' ? ({
     lib: {
       entry: './src/index.ts',

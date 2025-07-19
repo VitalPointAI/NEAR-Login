@@ -106,13 +106,16 @@ const mockConfig: MultiChainAuthConfig = {
   },
 };
 
-const mockNear = {} as any;
+const mockNear = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any  
+} as any;
 const mockSelector = {
   wallet: () => ({
     signAndSendTransactions: jest.fn(),
   }),
   isSignedIn: jest.fn().mockReturnValue(true),
   getAccounts: jest.fn().mockResolvedValue([{ accountId: 'test.testnet' }]),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe('useMultiChainAuth', () => {

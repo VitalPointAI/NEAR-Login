@@ -161,7 +161,7 @@ export interface UTXO {
 export interface SolanaTransactionRequest {
   to: string;
   amount: number; // in lamports
-  instructions?: any[]; // Additional Solana instructions
+  instructions?: unknown[]; // Additional Solana instructions
 }
 
 export interface XRPTransactionRequest {

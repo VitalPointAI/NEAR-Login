@@ -70,7 +70,7 @@ function WalletOnlyApp() {
 }
 
 function App() {
-  const handleToast = ({ title, description, variant }: any) => {
+  const handleToast = ({ title, description, variant }: { title?: string; description?: string; variant?: string }) => {
     console.log(`${variant?.toUpperCase()}: ${title} - ${description}`);
     // In a real app, you'd show this in a toast notification
     alert(`${title}: ${description}`);

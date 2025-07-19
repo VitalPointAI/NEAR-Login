@@ -51,7 +51,9 @@ const NEAR_CONFIG = {
 
 export const MultiChainAuthExample: React.FC = () => {
   const [near, setNear] = useState<nearAPI.Near | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selector, setSelector] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modal, setModal] = useState<any>(null);
 
   // Initialize NEAR and wallet selector

@@ -13,10 +13,12 @@ describe('ChainSignatureContract', () => {
     mockAccount = {
       viewFunction: jest.fn(),
       signAndSendTransactions: jest.fn(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     mockNear = {
       account: jest.fn().mockResolvedValue(mockAccount),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     contract = new ChainSignatureContract('test.contract', 'testnet', mockNear);
@@ -219,6 +221,7 @@ describe('createChainSignatureContract', () => {
   let mockNear: jest.Mocked<nearAPI.Near>;
 
   beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockNear = {} as any;
   });
 
