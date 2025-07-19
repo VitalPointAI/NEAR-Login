@@ -1,6 +1,6 @@
 {
   "name": "@vitalpointai/near-login",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Flexible React authentication library for NEAR Protocol with optional staking validation and session management",
   "type": "module",
   "main": "dist/index.cjs",

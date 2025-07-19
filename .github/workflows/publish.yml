@@ -43,6 +43,8 @@ jobs:
         with:
           # Fetch full history for proper version detection
           fetch-depth: 0
+          # Use GitHub token for pushing version bumps
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -61,21 +63,47 @@ jobs:
       - name: Build package
         run: pnpm run build
 
-      - name: Check if version changed
-        id: version-check
+      - name: Auto-increment version
+        id: version-bump
         run: |
-          # Get the current version from package.json
+          # Configure git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Get current version
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Current version: $CURRENT_VERSION"
           
           # Check if this version exists on npm
           if npm view @vitalpointai/near-login@$CURRENT_VERSION version 2>/dev/null; then
-            echo "version_exists=true" >> "$GITHUB_OUTPUT"
-            echo "Version $CURRENT_VERSION already exists on npm"
+            echo "Version $CURRENT_VERSION exists on npm, bumping patch version..."
+            # Use npm to bump patch version
+            npm version patch --no-git-tag-version
+            NEW_VERSION=$(node -p "require('./package.json').version")
+            echo "Bumped to version: $NEW_VERSION"
+            echo "version_bumped=true" >> "$GITHUB_OUTPUT"
+            echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            
+            # Commit the version change
+            git add package.json
+            git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
+            git push
           else
-            echo "version_exists=false" >> "$GITHUB_OUTPUT"
-            echo "Version $CURRENT_VERSION is new, will publish"
+            echo "Version $CURRENT_VERSION is new, no bump needed"
+            echo "version_bumped=false" >> "$GITHUB_OUTPUT"
+            echo "new_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          # Get the current version from package.json (after potential bump)
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+          
+          # Since we auto-bump when needed, this version should always be publishable
+          echo "version_exists=false" >> "$GITHUB_OUTPUT"
+          echo "Version $CURRENT_VERSION ready for publishing"
 
       - name: Publish to npm
         if: steps.version-check.outputs.version_exists == 'false'
