@@ -45,11 +45,18 @@
     "build": "tsc -b && vite build --mode lib",
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "pnpm run build"
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "prepublishOnly": "pnpm run build",
+    "release:patch": "npm version patch",
+    "release:minor": "npm version minor",
+    "release:major": "npm version major",
+    "release:custom": "npm version",
+    "check:publish": "npm pack --dry-run"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

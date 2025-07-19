@@ -1,5 +1,10 @@
 # @vitalpointai/near-login
 
+[![Publish to npm](https://github.com/VitalPointAI/NEAR-Login/actions/workflows/publish.yml/badge.svg)](https://github.com/VitalPointAI/NEAR-Login/actions/workflows/publish.yml)
+[![npm version](https://badge.fury.io/js/@vitalpointai%2Fnear-login.svg)](https://badge.fury.io/js/@vitalpointai%2Fnear-login)
+[![npm downloads](https://img.shields.io/npm/dm/@vitalpointai/near-login.svg)](https://www.npmjs.com/package/@vitalpointai/near-login)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A flexible React component library for NEAR Protocol authentication with optional staking validation and comprehensive security features.
 
 ## Features
@@ -21,6 +26,8 @@ yarn add @vitalpointai/near-login
 # or
 pnpm add @vitalpointai/near-login
 ```
+
+> **📦 Automated Publishing**: This package is automatically published to npm when new versions are pushed to the main branch. Releases include automated testing, building, and GitHub release creation.
 
 ## Quick Start
 

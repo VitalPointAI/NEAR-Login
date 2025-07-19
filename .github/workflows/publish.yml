@@ -1,0 +1,137 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Run linting
+        run: pnpm lint
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history for proper version detection
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build package
+        run: pnpm run build
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          # Get the current version from package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          
+          # Check if this version exists on npm
+          if npm view @vitalpointai/near-login@$CURRENT_VERSION version 2>/dev/null; then
+            echo "version_exists=true" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION already exists on npm"
+          else
+            echo "version_exists=false" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION is new, will publish"
+          fi
+
+      - name: Publish to npm
+        if: steps.version-check.outputs.version_exists == 'false'
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Git tag
+        if: steps.version-check.outputs.version_exists == 'false'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag "v${{ steps.version-check.outputs.current_version }}"
+          git push origin "v${{ steps.version-check.outputs.current_version }}"
+
+      - name: Create GitHub Release
+        if: steps.version-check.outputs.version_exists == 'false'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "v${{ steps.version-check.outputs.current_version }}"
+          release_name: "Release v${{ steps.version-check.outputs.current_version }}"
+          body: |
+            ## Changes in v${{ steps.version-check.outputs.current_version }}
+            
+            Published automatically from main branch.
+            
+            ### Package Information
+            - **Package**: @vitalpointai/near-login
+            - **Version**: ${{ steps.version-check.outputs.current_version }}
+            - **npm**: https://www.npmjs.com/package/@vitalpointai/near-login
+            
+            See the [CHANGELOG](https://github.com/VitalPointAI/NEAR-Login/commits/main) for detailed changes.
+          draft: false
+          prerelease: false
+
+  notify:
+    needs: [test, publish]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Notify on success
+        if: needs.publish.result == 'success'
+        run: |
+          echo "✅ Successfully published new version to npm!"
+          echo "Package: @vitalpointai/near-login"
+          echo "Check it out: https://www.npmjs.com/package/@vitalpointai/near-login"
+
+      - name: Notify on failure
+        if: needs.test.result == 'failure' || needs.publish.result == 'failure'
+        run: |
+          echo "❌ Workflow failed!"
+          if [ "${{ needs.test.result }}" = "failure" ]; then
+            echo "Tests failed - package not published"
+          elif [ "${{ needs.publish.result }}" = "failure" ]; then
+            echo "Publishing failed - check logs for details"
+          fi
+          exit 1
