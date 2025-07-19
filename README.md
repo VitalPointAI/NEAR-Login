@@ -5,17 +5,18 @@
 [![npm downloads](https://img.shields.io/npm/dm/@vitalpointai/near-login.svg)](https://www.npmjs.com/package/@vitalpointai/near-login)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A flexible React component library for NEAR Protocol authentication with optional staking validation and comprehensive security features.
+A flexible React authentication library for NEAR Protocol with optional staking validation, multi-chain support, and session management.
 
 ## Features
 
-- **Flexible Authentication Modes**: Wallet-only, optional staking, or required staking validation
-- **Security-First Design**: Comprehensive session management with encryption, device fingerprinting, and configurable timeouts
-- **TypeScript Support**: Full TypeScript definitions with excellent IDE support
-- **Modern React Patterns**: Built with React hooks and modern component patterns
-- **Wallet Integration**: Support for multiple NEAR wallets via Wallet Selector
-- **Configurable Security Levels**: From development-friendly to enterprise-grade security
-- **Session Management**: Persistent sessions with automatic cleanup and validation
+- **🔐 NEAR Authentication**: Seamless wallet integration with NEAR Wallet Selector
+- **🥩 Staking Validation**: Optional or required staking with configurable validator pools
+- **🔗 Multi-Chain Support**: Chain signature functionality for cross-chain transactions
+- **⚛️ React Components**: Ready-to-use components with customizable UI
+- **🪝 React Hooks**: Powerful hooks for authentication state management
+- **📱 Route Protection**: Built-in protected route components
+- **🔒 Session Management**: Persistent sessions with security features
+- **📘 TypeScript**: Full TypeScript support with comprehensive type definitions
 
 ## Installation
 
@@ -27,6 +28,14 @@ yarn add @vitalpointai/near-login
 pnpm add @vitalpointai/near-login
 ```
 
+### Peer Dependencies
+
+This library requires React and NEAR Wallet Selector:
+
+```bash
+npm install react react-dom @near-wallet-selector/core @near-wallet-selector/my-near-wallet
+```
+
 > **📦 Automated Publishing**: This package is automatically published to npm when new versions are pushed to the main branch. Releases include automated testing, building, and GitHub release creation.
 
 ## Quick Start
@@ -34,282 +43,536 @@ pnpm add @vitalpointai/near-login
 ### Basic Wallet Authentication
 
 ```tsx
-import { NEARLogin } from '@vitalpointai/near-login'
+import { NEARLogin } from '@vitalpointai/near-login';
 
 function App() {
+  const config = {
+    networkId: 'testnet',
+    contractId: 'your-contract.testnet'
+  };
+
   return (
-    <NEARLogin
-      networkId="testnet"
-      contractId="your-contract.testnet"
-      onAuthStateChange={(user, isStaked) => {
-        console.log('Auth state:', { user, isStaked })
-      }}
-    />
-  )
+    <NEARLogin config={config}>
+      <div>
+        <h1>My NEAR App</h1>
+        <p>This content is shown when authenticated</p>
+      </div>
+    </NEARLogin>
+  );
 }
 ```
 
 ### With Staking Validation
 
 ```tsx
-import { NEARLogin } from '@vitalpointai/near-login'
+import { NEARLogin } from '@vitalpointai/near-login';
 
 function App() {
+  const config = {
+    networkId: 'testnet',
+    contractId: 'your-contract.testnet',
+    requireStaking: true,
+    validator: {
+      poolId: 'validator.pool.near',
+      minStake: '100'  // Minimum 100 NEAR staked
+    }
+  };
+
   return (
-    <NEARLogin
-      networkId="testnet"
-      contractId="your-contract.testnet"
-      authMode="required-staking" // Requires staking validation
-      validatorPools={[
-        "validator1.pool.near",
-        "validator2.pool.near"
-      ]}
-      minimumStake="100" // Minimum 100 NEAR staked
-      onAuthStateChange={(user, isStaked) => {
-        if (isStaked) {
-          console.log('User is authenticated and staked!')
-        }
-      }}
-    />
-  )
+    <NEARLogin 
+      config={config}
+      onToast={(toast) => console.log('Notification:', toast)}
+    >
+      <div>
+        <h1>Staking-Protected App</h1>
+        <p>Only staked users can see this content</p>
+      </div>
+    </NEARLogin>
+  );
 }
 ```
 
-## Configuration Options
+### Using the Hook
+
+```tsx
+import { useNEARLogin } from '@vitalpointai/near-login';
+
+function MyComponent() {
+  const {
+    isConnected,
+    isAuthenticated, 
+    isStaked,
+    accountId,
+    signIn,
+    signOut,
+    stakeTokens
+  } = useNEARLogin();
+
+  if (!isConnected) {
+    return <button onClick={signIn}>Connect Wallet</button>;
+  }
+
+  return (
+    <div>
+      <p>Connected as: {accountId}</p>
+      {isStaked ? (
+        <p>✅ Staking validated</p>
+      ) : (
+        <button onClick={() => stakeTokens('100')}>
+          Stake 100 NEAR
+        </button>
+      )}
+      <button onClick={signOut}>Disconnect</button>
+    </div>
+  );
+}
+```
+
+### Route Protection
+
+```tsx
+import { ProtectedRoute } from '@vitalpointai/near-login';
+
+function App() {
+  const config = {
+    networkId: 'testnet',
+    requireStaking: true,
+    validator: { poolId: 'validator.pool.near' }
+  };
+
+  return (
+    <ProtectedRoute config={config}>
+      <div>This content requires authentication and staking</div>
+    </ProtectedRoute>
+  );
+}
+```
+
+## Configuration
 
 ### AuthConfig Interface
 
 ```tsx
 interface AuthConfig {
-  networkId: 'mainnet' | 'testnet' | 'betanet'
-  contractId?: string
-  authMode?: 'wallet-only' | 'optional-staking' | 'required-staking'
-  validatorPools?: string[]
-  minimumStake?: string
-  persistSession?: boolean
-  sessionSecurity?: SessionSecurityConfig
-  onAuthStateChange?: (user: User | null, isStaked: boolean) => void
-  onError?: (error: Error) => void
-}
-```
-
-### Authentication Modes
-
-| Mode | Description | Use Case |
-|------|-------------|----------|
-| `wallet-only` | Basic wallet connection only | Simple dApps, public applications |
-| `optional-staking` | Wallet connection with optional staking check | Apps with premium features |
-| `required-staking` | Requires valid staking to access | Exclusive apps, governance tools |
-
-## Security Features
-
-### Session Security Configuration
-
-The library provides comprehensive security options to protect user sessions:
-
-```tsx
-interface SessionSecurityConfig {
-  // Core Security Settings
-  maxAge?: number              // Maximum session duration (ms)
-  idleTimeout?: number         // Auto-logout after inactivity (ms)
-  encryptStorage?: boolean     // Encrypt session data in storage
+  // Required
+  networkId: 'mainnet' | 'testnet';
   
-  // Device & Network Security
-  deviceFingerprinting?: boolean  // Bind session to device characteristics
-  bindToIP?: boolean             // Bind session to IP address (optional)
-  
-  // Validation & Rotation
-  validateInterval?: number      // How often to validate session (ms)
-  rotateTokens?: boolean        // Periodically rotate session tokens
-  validateWithBackend?: string  // Backend endpoint for session validation
-  
-  // Advanced Security
-  requireReauth?: number        // Force re-authentication after time (ms)
-  secureStorage?: boolean       // Use more secure storage methods
-  preventConcurrent?: boolean   // Prevent multiple concurrent sessions
-  
-  // Error Handling
-  onSecurityViolation?: (violation: SecurityViolation) => void
-  onSessionExpired?: () => void
+  // Optional
+  contractId?: string;
+  requireStaking?: boolean;
+  validator?: ValidatorConfig;
+  sessionSecurity?: SessionSecurityConfig;
+  nodeUrl?: string;
+  walletUrl?: string;
+  helperUrl?: string;
+  explorerUrl?: string;
+  maxAge?: number;          // Session duration in milliseconds
+  refreshThreshold?: number; // When to refresh session
+}
+
+interface ValidatorConfig {
+  poolId: string;           // e.g., 'vitalpoint.pool.near'
+  displayName?: string;     // Human-readable validator name
+  description?: string;     // Validator description
+  required?: boolean;       // Whether staking is required (default: true)
+  minStake?: string;        // Minimum stake amount in NEAR
 }
 ```
 
-### Security Levels
+### Component Props
 
-#### High Security (Financial Apps)
-
-```tsx
-const highSecurity: SessionSecurityConfig = {
-  maxAge: 7 * 24 * 60 * 60 * 1000,        // 7 days max
-  idleTimeout: 4 * 60 * 60 * 1000,        // 4 hours idle timeout
-  encryptStorage: true,                     // Always encrypt
-  deviceFingerprinting: true,               // Bind to device
-  validateInterval: 5 * 60 * 1000,         // Validate every 5 minutes
-  rotateTokens: true,                       // Rotate tokens
-  requireReauth: 24 * 60 * 60 * 1000,      // Re-auth daily
-  secureStorage: true,                      // Use secure storage
-  preventConcurrent: true,                  // One session only
-}
-```
-
-#### Balanced Security (General Apps)
-
-```tsx
-const balancedSecurity: SessionSecurityConfig = {
-  maxAge: 14 * 24 * 60 * 60 * 1000,       // 14 days max
-  idleTimeout: 24 * 60 * 60 * 1000,       // 24 hours idle timeout
-  encryptStorage: true,                     // Encrypt data
-  deviceFingerprinting: true,               // Basic device binding
-  validateInterval: 30 * 60 * 1000,        // Validate every 30 minutes
-  rotateTokens: false,                      // No token rotation
-}
-```
-
-#### Development Mode (Testing)
-
-```tsx
-const devSecurity: SessionSecurityConfig = {
-  maxAge: 30 * 24 * 60 * 60 * 1000,       // 30 days max
-  idleTimeout: 7 * 24 * 60 * 60 * 1000,   // 7 days idle timeout
-  encryptStorage: false,                    // No encryption for debugging
-  deviceFingerprinting: false,              // No device binding
-  validateInterval: undefined,              // No validation
-}
-```
-
-### Security Best Practices
-
-1. **Choose Appropriate Security Level**: Match security settings to your application's risk profile
-2. **Enable Encryption**: Always encrypt session data in production
-3. **Set Reasonable Timeouts**: Balance security with user experience
-4. **Use Device Fingerprinting**: Helps prevent session hijacking
-5. **Validate Sessions**: Regular validation detects compromised sessions
-6. **Handle Security Violations**: Implement proper error handling and user notification
-7. **Monitor Session Activity**: Log and monitor authentication events
-
-### Device Fingerprinting
-
-The library uses a combination of browser characteristics for device fingerprinting:
-
-- Canvas rendering patterns
-- WebGL renderer information
-- Screen resolution and color depth
-- Timezone and language settings
-- Available fonts
-- Hardware concurrency
-
-This creates a unique device identifier without requiring explicit permissions.
-
-## API Reference
-
-### NEARLogin Component Props
+#### NEARLogin Props
 
 ```tsx
 interface NEARLoginProps {
-  networkId: 'mainnet' | 'testnet' | 'betanet'
-  contractId?: string
-  authMode?: 'wallet-only' | 'optional-staking' | 'required-staking'
-  validatorPools?: string[]
-  minimumStake?: string
-  persistSession?: boolean
-  sessionSecurity?: SessionSecurityConfig
-  className?: string
-  style?: React.CSSProperties
-  onAuthStateChange?: (user: User | null, isStaked: boolean) => void
-  onError?: (error: Error) => void
+  config: AuthConfig;                    // Configuration object
+  children: ReactNode;                   // Content to show when authenticated
+  onToast?: (toast: ToastNotification) => void;  // Toast notifications
+  renderLoading?: () => ReactNode;       // Custom loading component
+  renderError?: (error: string, retry: () => void) => ReactNode;  // Custom error component
+  renderUnauthorized?: (signIn: () => Promise<void>, stake?: (amount: string) => Promise<void>) => ReactNode;  // Custom unauthorized component
 }
 ```
 
-### User Interface
+#### ProtectedRoute Props
 
 ```tsx
-interface User {
-  accountId: string
-  balance: string
-  isStaked?: boolean
-  stakedAmount?: string
-  validatorPool?: string
-  sessionId?: string
-  lastActivity?: number
+interface ProtectedRouteProps {
+  config: AuthConfig;                    // Configuration object
+  children: ReactNode;                   // Protected content
+  fallback?: ReactNode;                  // Content to show when not authenticated
+  requireStaking?: boolean;              // Override staking requirement
 }
 ```
+## Hooks
 
-### Hooks
+### useNEARLogin
 
-#### useNEARAuth
+The main hook for accessing NEAR authentication state:
 
 ```tsx
 const {
-  user,
-  isAuthenticated,
-  isStaked,
-  loading,
-  error,
-  login,
-  logout,
-  checkStaking,
-  refreshSession
-} = useNEARAuth()
+  // Connection state
+  isConnected,         // boolean - wallet connected
+  isAuthenticated,     // boolean - wallet connected and session valid
+  isStaked,           // boolean - has valid staking (if required)
+  isLoading,          // boolean - loading state
+  
+  // Account info
+  accountId,          // string | null - connected account ID
+  stakingInfo,        // StakingInfo | null - staking details
+  sessionToken,       // string | null - current session token
+  error,              // string | null - current error message
+  config,             // AuthConfig | null - current configuration
+  
+  // Actions
+  signIn,             // () => Promise<void> - connect wallet
+  signOut,            // () => Promise<void> - disconnect wallet
+  stakeTokens,        // (amount: string) => Promise<void> - stake NEAR
+  unstakeTokens,      // (amount: string) => Promise<void> - unstake NEAR
+  refreshStakingInfo, // () => Promise<void> - refresh staking data
+  
+  // Computed values
+  canStake,           // boolean - can perform staking
+  requiresStaking,    // boolean - staking is required by config
+} = useNEARLogin();
 ```
 
+### Multi-Chain Authentication
+
+For advanced multi-chain functionality:
+
+```tsx
+import { useMultiChainAuth } from '@vitalpointai/near-login';
+
+const multiChain = useMultiChainAuth({
+  config: nearConfig,
+  near: nearConnection,
+  selector: walletSelector
+});
+```
+
+### Simplified Multi-Chain
+
+```tsx
+import { useSimpleMultiChainAuth } from '@vitalpointai/near-login';
+
+const {
+  isAuthenticated,
+  connectChain,
+  signAuthMessage
+} = useSimpleMultiChainAuth(config, near, selector);
+```
+
+## Data Types
+
+### Authentication State
+
+```tsx
+interface UseNEARLogin {
+  // State
+  isLoading: boolean;
+  isConnected: boolean;
+  accountId: string | null;
+  isAuthenticated: boolean;
+  isStaked: boolean;
+  stakingInfo: StakingInfo | null;
+  sessionToken: string | null;
+  error: string | null;
+  config: AuthConfig | null;
+  
+  // Actions
+  signIn: () => Promise<void>;
+  signOut: () => Promise<void>;
+  stakeTokens: (amount: string) => Promise<void>;
+  unstakeTokens: (amount: string) => Promise<void>;
+  refreshStakingInfo: () => Promise<void>;
+  
+  // Computed
+  canStake: boolean;
+  requiresStaking: boolean;
+}
+```
+
+### Staking Information
+
+```tsx
+interface StakingInfo {
+  accountId: string;
+  stakedAmount: string;          // Amount staked in yoctoNEAR
+  unstakedAmount: string;        // Amount unstaked in yoctoNEAR
+  availableForWithdrawal: string; // Amount available for withdrawal in yoctoNEAR
+  rewards: string;               // Rewards earned in yoctoNEAR
+  isStaking: boolean;            // Whether currently staking
+  poolId: string;                // Validator pool ID
+}
+```
+
+### Toast Notifications
+
+```tsx
+interface ToastNotification {
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  message: string;
+  duration?: number;  // Display duration in milliseconds
+}
+```
+
+## Advanced Features
+
+### Multi-Chain Authentication
+
+The library supports cross-chain authentication using NEAR's chain signature functionality:
+
+```tsx
+import { 
+  useMultiChainAuth,
+  MultiChainAuthManager,
+  ChainSignatureContract,
+  DEFAULT_CHAIN_CONFIGS 
+} from '@vitalpointai/near-login';
+
+// Setup multi-chain authentication
+const config = {
+  networkId: 'testnet',
+  chainSignature: {
+    contractId: 'v1.signer-prod.testnet',
+    supportedChains: ['ethereum', 'bitcoin', 'solana'],
+  }
+};
+
+const multiChain = useMultiChainAuth({
+  config,
+  near: nearConnection,
+  selector: walletSelector
+});
+
+// Connect to multiple chains
+await multiChain.connectMultipleChains(['ethereum', 'bitcoin']);
+
+// Sign messages for different chains
+const ethSignature = await multiChain.signAuthMessage('ethereum');
+const btcSignature = await multiChain.signAuthMessage('bitcoin');
+```
+
+### Utility Functions
+
+The library provides various utility functions:
+
+```tsx
+import {
+  formatNearAmount,
+  stakeTokens,
+  unstakeTokens,
+  getStakingInfo,
+  validateStakingAmount,
+  createNearConnection,
+  DEFAULT_NEAR_CONFIG
+} from '@vitalpointai/near-login';
+
+// Format NEAR amounts
+const formatted = formatNearAmount('1000000000000000000000000'); // "1 NEAR"
+
+// Direct staking operations
+await stakeTokens(near, 'validator.pool.near', '100');
+await unstakeTokens(near, 'validator.pool.near', '50');
+
+// Get staking information
+const stakingInfo = await getStakingInfo(near, 'user.near', 'validator.pool.near');
+
+// Validate stake amount
+const isValid = validateStakingAmount('100', '1'); // amount >= minimum
+
+// Create NEAR connection
+const near = await createNearConnection(DEFAULT_NEAR_CONFIG.testnet);
+```
+
+### Custom Components
+
+You can customize the authentication flow with custom render functions:
+
+```tsx
+<NEARLogin
+  config={config}
+  renderLoading={() => <div>Loading your custom spinner...</div>}
+  renderError={(error, retry) => (
+    <div>
+      <h2>Something went wrong!</h2>
+      <p>{error}</p>
+      <button onClick={retry}>Try Again</button>
+    </div>
+  )}
+  renderUnauthorized={(signIn, stake) => (
+    <div>
+      <h2>Welcome!</h2>
+      <button onClick={signIn}>Connect NEAR Wallet</button>
+      {stake && (
+        <button onClick={() => stake('100')}>
+          Stake 100 NEAR
+        </button>
+      )}
+    </div>
+  )}
+>
+  <YourProtectedContent />
+</NEARLogin>
+```
 ## Examples
 
-### Route Protection
+### Complete App Example
 
 ```tsx
-import { useNEARAuth } from '@vitalpointai/near-login'
+import React from 'react';
+import { NEARLogin, useNEARLogin } from '@vitalpointai/near-login';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isStaked, loading } = useNEARAuth()
+// Protected content component
+function Dashboard() {
+  const { accountId, isStaked, stakingInfo, stakeTokens, signOut } = useNEARLogin();
 
-  if (loading) return <div>Loading...</div>
-  if (!isAuthenticated) return <div>Please connect your wallet</div>
-  if (!isStaked) return <div>Staking required to access this content</div>
+  return (
+    <div>
+      <h1>Welcome, {accountId}!</h1>
+      
+      {isStaked ? (
+        <div>
+          <p>✅ Staking Status: Active</p>
+          <p>Staked Amount: {stakingInfo?.stakedAmount} yoctoNEAR</p>
+          <p>Validator: {stakingInfo?.poolId}</p>
+        </div>
+      ) : (
+        <div>
+          <p>❌ Staking Required</p>
+          <button onClick={() => stakeTokens('100')}>
+            Stake 100 NEAR
+          </button>
+        </div>
+      )}
+      
+      <button onClick={signOut}>Disconnect</button>
+    </div>
+  );
+}
 
-  return <>{children}</>
+// Main app component
+function App() {
+  const config = {
+    networkId: 'testnet' as const,
+    contractId: 'your-contract.testnet',
+    requireStaking: true,
+    validator: {
+      poolId: 'vitalpoint.pool.near',
+      minStake: '100',
+      displayName: 'VitalPoint Validator',
+      required: true
+    }
+  };
+
+  const handleToast = (toast) => {
+    // Handle toast notifications (integrate with your toast library)
+    console.log(`${toast.type}: ${toast.title} - ${toast.message}`);
+  };
+
+  return (
+    <NEARLogin 
+      config={config}
+      onToast={handleToast}
+    >
+      <Dashboard />
+    </NEARLogin>
+  );
+}
+
+export default App;
+```
+
+### Using with Next.js
+
+```tsx
+// pages/_app.tsx or app/layout.tsx
+import { NEARLogin } from '@vitalpointai/near-login';
+
+export default function MyApp({ Component, pageProps }) {
+  const config = {
+    networkId: 'mainnet' as const,
+    requireStaking: false  // Optional staking
+  };
+
+  return (
+    <NEARLogin config={config}>
+      <Component {...pageProps} />
+    </NEARLogin>
+  );
+}
+
+// pages/protected.tsx
+import { useNEARLogin, ProtectedRoute } from '@vitalpointai/near-login';
+
+function ProtectedPage() {
+  const { isAuthenticated, accountId } = useNEARLogin();
+
+  if (!isAuthenticated) {
+    return <div>This page is protected</div>;
+  }
+
+  return (
+    <div>
+      <h1>Protected Content</h1>
+      <p>Hello, {accountId}!</p>
+    </div>
+  );
+}
+
+// Alternatively, use ProtectedRoute component
+function AltProtectedPage() {
+  const config = { networkId: 'mainnet' as const, requireStaking: true };
+
+  return (
+    <ProtectedRoute config={config}>
+      <div>This content requires staking</div>
+    </ProtectedRoute>
+  );
 }
 ```
 
-### Custom Security Configuration
+### Integration with Toast Libraries
 
 ```tsx
-import { NEARLogin } from '@vitalpointai/near-login'
-
-const customSecurity = {
-  maxAge: 7 * 24 * 60 * 60 * 1000,     // 7 days
-  idleTimeout: 2 * 60 * 60 * 1000,     // 2 hours
-  encryptStorage: true,
-  deviceFingerprinting: true,
-  validateInterval: 10 * 60 * 1000,     // 10 minutes
-  onSecurityViolation: (violation) => {
-    console.warn('Security violation:', violation)
-    // Handle security violation (logout, notify user, etc.)
-  },
-  onSessionExpired: () => {
-    console.log('Session expired')
-    // Handle session expiration
-  }
-}
+import { toast } from 'react-hot-toast'; // or your preferred toast library
+import { NEARLogin } from '@vitalpointai/near-login';
 
 function App() {
+  const handleToast = (notification) => {
+    switch (notification.type) {
+      case 'success':
+        toast.success(notification.message);
+        break;
+      case 'error':
+        toast.error(notification.message);
+        break;
+      case 'warning':
+        toast.warning(notification.message);
+        break;
+      default:
+        toast(notification.message);
+    }
+  };
+
   return (
-    <NEARLogin
-      networkId="mainnet"
-      authMode="required-staking"
-      sessionSecurity={customSecurity}
-      onAuthStateChange={(user, isStaked) => {
-        console.log('Auth state:', { user, isStaked })
-      }}
-    />
-  )
+    <NEARLogin 
+      config={config}
+      onToast={handleToast}
+    >
+      <YourApp />
+    </NEARLogin>
+  );
 }
 ```
+```
 
-## Contributing
+## Development
 
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
-
-### Development
+### Setup
 
 ```bash
 # Clone the repository
@@ -325,38 +588,204 @@ pnpm dev
 # Run tests
 pnpm test
 
+# Run tests in watch mode
+pnpm test:watch
+
+# Check test coverage
+pnpm test:coverage
+
+# Lint code
+pnpm lint
+
 # Build for production
 pnpm build
 ```
 
-## Security Considerations
+### Project Structure
 
-- **Session Storage**: Sessions are encrypted by default in production
-- **Device Binding**: Device fingerprinting helps prevent session hijacking
-- **Automatic Cleanup**: Expired sessions are automatically cleaned up
-- **Validation**: Regular session validation ensures integrity
-- **Error Handling**: Comprehensive error handling for security violations
+```
+src/
+├── components/        # React components
+│   ├── NEARLogin.tsx     # Main authentication component
+│   └── ProtectedRoute.tsx # Route protection component
+├── hooks/            # React hooks
+│   ├── useNEARLogin.ts   # Main authentication hook
+│   └── useMultiChainAuth.ts # Multi-chain authentication
+├── store/            # State management
+│   └── auth.ts          # Authentication store
+├── utils/            # Utility functions
+│   ├── near.ts          # NEAR protocol utilities
+│   ├── multi-chain-auth.ts # Multi-chain functionality
+│   └── chain-signature-contract.ts # Chain signature contract
+├── types/            # TypeScript type definitions
+└── index.ts          # Main export file
+```
+
+### Testing
+
+The library includes comprehensive tests:
+
+- **Unit tests**: Individual function and component testing
+- **Integration tests**: Full authentication flow testing  
+- **Hook tests**: React hook behavior testing
+- **Multi-chain tests**: Cross-chain functionality testing
+
+Run tests with coverage:
+```bash
+pnpm test:coverage
+```
+
+### Building
+
+The build process generates:
+- **ESM bundle** (`dist/index.js`) - Modern ES modules
+- **CommonJS bundle** (`dist/index.cjs`) - Node.js compatibility
+- **TypeScript declarations** (`dist/index.d.ts`) - Full type support
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Session not persisting**: Check that `persistSession` is enabled and browser storage is available
-2. **Security violations**: Review security configuration and ensure settings are appropriate for your use case
-3. **Staking validation fails**: Verify validator pool addresses and minimum stake amounts
-4. **TypeScript errors**: Ensure you have the latest type definitions
+#### TypeScript Errors
+```tsx
+// ❌ Incorrect - flat props
+<NEARLogin networkId="testnet" contractId="test.near" />
+
+// ✅ Correct - config object
+<NEARLogin config={{ networkId: 'testnet', contractId: 'test.near' }} />
+```
+
+#### Missing Peer Dependencies
+```bash
+# Install required peer dependencies
+npm install react react-dom @near-wallet-selector/core @near-wallet-selector/my-near-wallet
+```
+
+#### Session Not Persisting
+- Check browser localStorage availability
+- Ensure `maxAge` is set appropriately in config
+- Verify no browser privacy settings blocking storage
+
+#### Staking Validation Failing
+- Verify validator pool ID is correct
+- Check minimum stake amount configuration
+- Ensure validator pool is active and accepting delegations
 
 ### Debug Mode
 
 Enable debug logging by setting the environment variable:
 
 ```bash
-VITE_DEBUG_NEAR_LOGIN=true
+# For Vite/React apps
+VITE_DEBUG_NEAR_LOGIN=true npm start
+
+# For Next.js apps  
+DEBUG_NEAR_LOGIN=true npm run dev
 ```
+
+### Browser Compatibility
+
+- **Modern browsers**: Chrome 88+, Firefox 78+, Safari 14+, Edge 88+
+- **Required features**: ES2020, LocalStorage, Fetch API, WebCrypto
+- **Polyfills**: May be needed for older browsers
+
+## Migration Guide
+
+### From v1.x to v2.x
+
+The major breaking changes:
+
+```tsx
+// v1.x - Old API
+<NEARLogin
+  networkId="testnet"
+  authMode="required-staking"
+  onAuthStateChange={(user, isStaked) => {}}
+/>
+
+// v2.x - New API  
+<NEARLogin
+  config={{
+    networkId: 'testnet',
+    requireStaking: true
+  }}
+  onToast={(toast) => {}}
+>
+  <YourContent />
+</NEARLogin>
+```
+
+Key changes:
+- Props moved to `config` object
+- `children` prop now required
+- `onAuthStateChange` replaced with `onToast`
+- New hook: `useNEARLogin` (replaces `useNEARAuth`)
+- Enhanced TypeScript support
+
+## Contributing
+
+We welcome contributions! Here's how to get started:
+
+### Contributing Guidelines
+
+1. **Fork the repository** and create a feature branch
+2. **Follow the coding standards**: ESLint and Prettier configs provided
+3. **Write tests** for new features and bug fixes
+4. **Update documentation** including README and JSDoc comments
+5. **Test your changes** with `pnpm test` and `pnpm lint`
+6. **Submit a pull request** with a clear description of changes
+
+### Code Standards
+
+- **TypeScript**: Use strict TypeScript with full type coverage
+- **React**: Use modern hooks and functional components
+- **Testing**: Jest and React Testing Library for all tests
+- **Linting**: ESLint with TypeScript rules
+- **Formatting**: Prettier for consistent code formatting
+
+### Development Workflow
+
+```bash
+# 1. Fork and clone
+git clone https://github.com/your-username/NEAR-Login.git
+cd NEAR-Login
+
+# 2. Create feature branch
+git checkout -b feature/your-feature-name
+
+# 3. Install dependencies
+pnpm install
+
+# 4. Make changes and test
+pnpm test
+pnpm lint
+
+# 5. Commit and push
+git commit -m "feat: add your feature"
+git push origin feature/your-feature-name
+
+# 6. Create pull request
+```
+
+### Release Process
+
+This project uses automated releases:
+- **Version bumping**: Automatic semantic versioning
+- **Testing**: All tests must pass before release
+- **Building**: Automated build and type generation
+- **Publishing**: Automatic npm publishing on merge to main
+- **GitHub Releases**: Automated release notes generation
 
 ## License
 
 MIT License - see [LICENSE](./LICENSE) file for details.
+
+## Support
+
+- **📚 Documentation**: This README and inline code documentation
+- **🐛 Issues**: Report bugs on [GitHub Issues](https://github.com/VitalPointAI/NEAR-Login/issues)
+- **💡 Feature Requests**: Use GitHub Issues with the `enhancement` label
+- **📧 Contact**: Open an issue for questions and support
 
 ## Changelog
 
@@ -364,4 +793,4 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history and breaking changes.
 
 ---
 
-**Need help?** Open an issue on [GitHub](https://github.com/VitalPointAI/NEAR-Login/issues) or check our [examples](./examples/) directory for more usage patterns.
+**🚀 Ready to build?** Check out the [examples](./examples/) directory for more usage patterns and integration guides.
