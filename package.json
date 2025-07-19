@@ -45,8 +45,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build --mode lib",
-    "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
+    "build": "vite build --mode lib && npm run build:types",
+    "build:types": "tsc --project tsconfig.lib.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:ci": "eslint . --max-warnings 50",

@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import dts from 'vite-plugin-dts'
 
 // https://vite.dev/config/
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,11 +7,6 @@ export default defineConfig(({ mode }: any) => ({
   plugins: [
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (react as any)(),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (dts as any)({
-      include: ['src/**/*'],
-      exclude: ['src/examples/**/*', 'src/**/*.stories.*', 'src/**/*.test.*']
-    }),
   ],
   build: mode === 'lib' ? ({
     lib: {
