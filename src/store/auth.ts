@@ -47,7 +47,6 @@ interface NEARStakingAuthStore extends AuthState {
 }
 
 export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
-  // @ts-expect-error - Zustand subscribeWithSelector typing issue
   subscribeWithSelector((set, get) => ({
     // Initial state
     isLoading: false,
