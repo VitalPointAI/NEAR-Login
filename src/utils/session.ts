@@ -1,4 +1,9 @@
-import type { SessionData, SessionSecurityConfig, SecurityViolation } from '../types';
+import type { 
+  SessionData, 
+  SessionSecurityConfig, 
+  SecurityViolation,
+  StakingInfo 
+} from '../types';
 
 export class SessionManager {
   private config: SessionSecurityConfig;
@@ -10,7 +15,7 @@ export class SessionManager {
   constructor(
     duration?: number, // Backward compatibility
     storageKey?: string, // Backward compatibility
-    _backend?: any, // Backward compatibility (unused)
+    _backend?: unknown, // Backward compatibility (unused)
     _rememberSession?: boolean, // Backward compatibility (unused)
     config: SessionSecurityConfig = {} // New security config
   ) {
@@ -257,13 +262,13 @@ export class SessionManager {
     accountId: string, 
     signature: string, 
     _publicKey: string, // Unused but kept for backward compatibility
-    stakingInfo: any
+    stakingInfo: StakingInfo | null
   ): SessionData {
     const now = Date.now();
     const sessionData: SessionData = {
       accountId,
       isStaked: !!stakingInfo,
-      stakingInfo,
+      stakingInfo: stakingInfo || undefined,
       expiresAt: now + (this.config.maxAge || 7 * 24 * 60 * 60 * 1000),
       signature,
       createdAt: now,

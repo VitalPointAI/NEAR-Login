@@ -31,7 +31,7 @@ jobs:
         run: pnpm test
 
       - name: Run linting
-        run: pnpm lint
+        run: pnpm lint --max-warnings 100:ci
 
   publish:
     needs: test

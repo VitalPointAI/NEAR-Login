@@ -46,6 +46,7 @@
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:ci": "eslint . --max-warnings 50",
     "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch",

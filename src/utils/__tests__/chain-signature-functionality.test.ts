@@ -6,9 +6,11 @@ const mockAccount = {
   signAndSendTransactions: jest.fn(),
 };
 
+import { Near } from 'near-api-js';
+
 const mockNear = {
   account: jest.fn().mockResolvedValue(mockAccount),
-} as any;
+} as unknown as Near;
 
 describe('Chain Signature Functionality Tests', () => {
   beforeEach(() => {
@@ -130,7 +132,7 @@ describe('Chain Signature Functionality Tests', () => {
         expect(result[0]).toHaveProperty('r');
         expect(result[0]).toHaveProperty('s');
         expect(result[0]).toHaveProperty('v');
-      } catch (error) {
+      } catch {
         // The signature parsing may fail in tests - verify transaction structure was correct
         expect(mockSignerAccount.signAndSendTransactions).toHaveBeenCalledWith({
           transactions: expect.arrayContaining([
@@ -180,7 +182,7 @@ describe('Chain Signature Functionality Tests', () => {
           keyType: 'Eddsa',
           signerAccount: mockSignerAccount,
         });
-      } catch (error) {
+      } catch {
         // Expected in test environment - verify correct transaction structure
       }
 

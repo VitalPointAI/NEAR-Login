@@ -157,7 +157,7 @@ export class ChainSignatureContract {
           if (parsed.signature) {
             return this.parseRSVFromHex(parsed.signature);
           }
-        } catch (e) {
+        } catch {
           // Log might not be JSON, check for hex signature pattern
           if (log.includes('signature:')) {
             const sigMatch = log.match(/signature:\s*([a-fA-F0-9]+)/);

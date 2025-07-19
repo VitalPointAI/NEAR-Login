@@ -520,7 +520,7 @@ if (typeof window !== 'undefined') {
         currentSelector = state.selector;
         
         if (currentSelector) {
-          const subscription = currentSelector.store.observable.subscribe((walletState: any) => {
+          const subscription = currentSelector.store.observable.subscribe((walletState: { accounts: Array<{ accountId: string }> }) => {
             const { accounts } = walletState;
             
             if (accounts.length > 0) {

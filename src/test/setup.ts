@@ -19,7 +19,7 @@ jest.mock('@near-wallet-selector/core', () => ({
 // Mock crypto APIs for testing
 Object.assign(global, {
   crypto: {
-    getRandomValues: (arr: any) => {
+    getRandomValues: (arr: Uint8Array) => {
       for (let i = 0; i < arr.length; i++) {
         arr[i] = Math.floor(Math.random() * 256);
       }

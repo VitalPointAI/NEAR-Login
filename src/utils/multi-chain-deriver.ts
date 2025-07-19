@@ -150,6 +150,7 @@ export class MultiChainAddressDeriver {
       
       if (pubKeyBuffer.length === 33) {
         // Compressed key - decompress it
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { ECPair } = require('bitcoinjs-lib');
         const keyPair = ECPair.fromPublicKey(pubKeyBuffer);
         uncompressedPubKey = keyPair.publicKey;

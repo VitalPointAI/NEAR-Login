@@ -3,20 +3,25 @@ import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default defineConfig(({ mode }: any) => ({
   plugins: [
-    react() as any,
-    dts({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (react as any)(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (dts as any)({
       include: ['src/**/*'],
       exclude: ['src/examples/**/*', 'src/**/*.stories.*', 'src/**/*.test.*']
-    }) as any
+    }),
   ],
-  build: mode === 'lib' ? {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  build: mode === 'lib' ? ({
     lib: {
       entry: './src/index.ts',
       name: 'NEARStakingAuth',
       formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      fileName: (format: any) => `index.${format === 'es' ? 'js' : 'cjs'}`
     },
     rollupOptions: {
       external: [
@@ -40,5 +45,6 @@ export default defineConfig(({ mode }) => ({
       }
     },
     cssCodeSplit: false
-  } : undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any) : undefined
 }))
