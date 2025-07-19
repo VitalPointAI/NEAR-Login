@@ -305,35 +305,6 @@ function App() {
 }
 ```
 
-## Migration Guide
-
-### From v1.x to v2.x
-
-1. **Authentication Modes**: The `requireStaking` prop has been replaced with `authMode`:
-
-```tsx
-// v1.x
-<NEARLogin requireStaking={true} />
-
-// v2.x
-<NEARLogin authMode="required-staking" />
-```
-
-2. **Session Security**: New security configuration options:
-
-```tsx
-// v2.x - Add security configuration
-<NEARLogin
-  authMode="required-staking"
-  sessionSecurity={{
-    maxAge: 24 * 60 * 60 * 1000,
-    encryptStorage: true
-  }}
-/>
-```
-
-3. **TypeScript**: Update import paths and interface names as needed.
-
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
