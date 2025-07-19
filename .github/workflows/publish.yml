@@ -66,14 +66,14 @@ jobs:
         run: |
           # Get the current version from package.json
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
           
           # Check if this version exists on npm
           if npm view @vitalpointai/near-login@$CURRENT_VERSION version 2>/dev/null; then
-            echo "version_exists=true" >> $GITHUB_OUTPUT
+            echo "version_exists=true" >> "$GITHUB_OUTPUT"
             echo "Version $CURRENT_VERSION already exists on npm"
           else
-            echo "version_exists=false" >> $GITHUB_OUTPUT
+            echo "version_exists=false" >> "$GITHUB_OUTPUT"
             echo "Version $CURRENT_VERSION is new, will publish"
           fi
 
