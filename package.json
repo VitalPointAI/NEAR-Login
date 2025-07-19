@@ -32,6 +32,9 @@
   ],
   "author": "VitalPoint.ai",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vitalpointai/near-login.git"
