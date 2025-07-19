@@ -28,6 +28,16 @@ Interactive demo with mode selector showing all three authentication modes in on
 - **Features**: Switch between all authentication modes
 - **Authentication**: Configurable (wallet-only, optional staking, required staking)
 
+### 5. security-configurations.tsx
+Comprehensive security configuration examples showing different security levels for various use cases.
+- **Use Case**: Production apps requiring secure session management
+- **Features**: High, balanced, and development security configurations
+- **Authentication**: Configurable with advanced security options
+- **Security Levels**:
+  - **High Security**: Financial apps, governance tools (7-day max, 4-hour idle)
+  - **Balanced Security**: General apps, marketplaces (14-day max, 24-hour idle)  
+  - **Development Mode**: Testing, demos (30-day max, minimal security)
+
 ## Usage
 
 These examples are TypeScript React components that you can integrate into your application. 
@@ -46,11 +56,54 @@ import type { AuthConfig } from '../src';
 
 ## Configuration
 
-Each example includes a different `AuthConfig` setup:
+Each example includes a different configuration setup:
 
-- **Wallet Only**: No validator specified
-- **Optional Staking**: `requireStaking: false` with validator config
-- **Required Staking**: `requireStaking: true` with validator config
+- **Wallet Only**: No validator specified, basic wallet connection
+- **Optional Staking**: `authMode: 'optional-staking'` with validator config
+- **Required Staking**: `authMode: 'required-staking'` with validator config
+- **Security Configurations**: Advanced `SessionSecurityConfig` examples for different security levels
+
+### Security Configuration Examples
+
+The `security-configurations.tsx` example demonstrates three security levels:
+
+**High Security (Financial Applications):**
+```tsx
+const highSecurity: SessionSecurityConfig = {
+  maxAge: 7 * 24 * 60 * 60 * 1000,        // 7 days maximum
+  idleTimeout: 4 * 60 * 60 * 1000,        // 4 hours idle timeout
+  encryptStorage: true,                     // Always encrypt
+  deviceFingerprinting: true,               // Bind to device
+  validateInterval: 5 * 60 * 1000,         // Validate every 5 minutes
+  rotateTokens: true,                       // Rotate session tokens
+  requireReauth: 24 * 60 * 60 * 1000,      // Re-authenticate daily
+  secureStorage: true,                      // Use secure storage
+  preventConcurrent: true,                  // Single session only
+}
+```
+
+**Balanced Security (General Applications):**
+```tsx
+const balancedSecurity: SessionSecurityConfig = {
+  maxAge: 14 * 24 * 60 * 60 * 1000,       // 14 days maximum
+  idleTimeout: 24 * 60 * 60 * 1000,       // 24 hours idle timeout
+  encryptStorage: true,                     // Encrypt session data
+  deviceFingerprinting: true,               // Basic device binding
+  validateInterval: 30 * 60 * 1000,        // Validate every 30 minutes
+  rotateTokens: false,                      // No token rotation
+}
+```
+
+**Development Mode (Testing):**
+```tsx
+const devSecurity: SessionSecurityConfig = {
+  maxAge: 30 * 24 * 60 * 60 * 1000,       // 30 days maximum
+  idleTimeout: 7 * 24 * 60 * 60 * 1000,   // 7 days idle timeout
+  encryptStorage: false,                    // No encryption for debugging
+  deviceFingerprinting: false,              // No device binding
+  validateInterval: undefined,              // No validation intervals
+}
+```
 
 ## Running Examples
 

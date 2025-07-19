@@ -75,11 +75,13 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
       try {
         set({ isLoading: true, error: null, config });
 
-        // Initialize session manager
+        // Initialize session manager with security configuration
         const sessionManager = new SessionManager(
-          config.sessionConfig?.duration,
+          config.sessionConfig?.duration, // Backward compatibility
           config.sessionConfig?.storageKey,
-          config.backend
+          config.backend,
+          config.sessionConfig?.rememberSession,
+          config.sessionSecurity // New security configuration
         );
 
         // Check for existing valid session first
@@ -164,18 +166,31 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
       if (!sessionManager || !config) return;
 
       try {
-        const session = await sessionManager.refreshSession();
-        if (session) {
-          set({
-            isConnected: true,
-            accountId: session.accountId,
-            isAuthenticated: true,
-            isStaked: session.isStaked,
-            stakingInfo: session.stakingInfo,
-            sessionToken: session.signature || null,
-          });
+        const refreshed = sessionManager.refreshSession();
+        if (refreshed) {
+          const session = sessionManager.getSession();
+          if (session) {
+            set({
+              isConnected: true,
+              accountId: session.accountId,
+              isAuthenticated: true,
+              isStaked: session.isStaked,
+              stakingInfo: session.stakingInfo,
+              sessionToken: session.signature || null,
+            });
+          } else {
+            // Session invalid, need to re-authenticate
+            set({
+              isConnected: false,
+              accountId: null,
+              isAuthenticated: false,
+              isStaked: false,
+              stakingInfo: null,
+              sessionToken: null,
+            });
+          }
         } else {
-          // Session invalid, need to re-authenticate
+          // Session refresh failed
           set({
             isConnected: false,
             accountId: null,
@@ -194,7 +209,7 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
           isStaked: false,
           stakingInfo: null,
           sessionToken: null,
-          error: 'Session expired'
+          error: error instanceof Error ? error.message : 'Session authentication failed'
         });
       }
     },
@@ -236,12 +251,12 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
             const signedMessage = await wallet.signMessage({
               message,
               recipient: accountId,
-              nonce: new Uint8Array(32)
+              nonce: Buffer.from(crypto.getRandomValues(new Uint8Array(32)))
             });
 
             if (signedMessage) {
               // Create session
-              const session = await sessionManager.createSession(
+              const session = sessionManager.createSession(
                 accountId,
                 signedMessage.signature,
                 signedMessage.publicKey,
