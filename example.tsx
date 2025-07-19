@@ -5,9 +5,9 @@ import type { AuthConfig } from './src';
 // Example 1: Wallet-only authentication
 const walletOnlyConfig: AuthConfig = {
   nearConfig: {
-    networkId: 'testnet',
+    networkId: 'testnet', // Use testnet for development
   },
-  // No validator = wallet-only auth
+  // No validator = wallet-only authentication
 };
 
 // Example 2: Optional staking
