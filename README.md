@@ -689,39 +689,6 @@ DEBUG_NEAR_LOGIN=true npm run dev
 - **Required features**: ES2020, LocalStorage, Fetch API, WebCrypto
 - **Polyfills**: May be needed for older browsers
 
-## Migration Guide
-
-### From v1.x to v2.x
-
-The major breaking changes:
-
-```tsx
-// v1.x - Old API
-<NEARLogin
-  networkId="testnet"
-  authMode="required-staking"
-  onAuthStateChange={(user, isStaked) => {}}
-/>
-
-// v2.x - New API  
-<NEARLogin
-  config={{
-    networkId: 'testnet',
-    requireStaking: true
-  }}
-  onToast={(toast) => {}}
->
-  <YourContent />
-</NEARLogin>
-```
-
-Key changes:
-- Props moved to `config` object
-- `children` prop now required
-- `onAuthStateChange` replaced with `onToast`
-- New hook: `useNEARLogin` (replaces `useNEARAuth`)
-- Enhanced TypeScript support
-
 ## Contributing
 
 We welcome contributions! Here's how to get started:
