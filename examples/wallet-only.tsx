@@ -1,6 +1,6 @@
 import React from 'react';
-import { NEARLogin, useNEARLogin } from '@vitalpointai/near-login';
-import type { AuthConfig } from '@vitalpointai/near-login';
+import { NEARLogin, useNEARLogin } from '../src';
+import type { AuthConfig } from '../src';
 
 // Wallet-only authentication - no staking required
 const config: AuthConfig = {

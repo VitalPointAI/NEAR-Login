@@ -6,12 +6,27 @@ This directory contains example implementations of @vitalpointai/near-login in d
 
 ### 1. wallet-only.tsx
 Basic wallet authentication without any staking requirements. Perfect for simple NEAR dApps that just need wallet connection.
+- **Use Case**: Simple authentication for dApps
+- **Features**: Wallet connection, logout functionality
+- **Authentication**: Wallet-only (no staking)
 
 ### 2. optional-staking.tsx  
 Shows how to implement optional staking benefits where users can access the app without staking, but get additional features if they do stake.
+- **Use Case**: Freemium model with staking benefits
+- **Features**: Basic access + premium features for stakers
+- **Authentication**: Wallet required, staking optional for benefits
 
 ### 3. required-staking.tsx
 Demonstrates mandatory staking requirements where users must stake tokens to access the application.
+- **Use Case**: Exclusive access for stakers only
+- **Features**: VIP area, staking rewards, premium content
+- **Authentication**: Both wallet and staking required
+
+### 4. comprehensive-demo.tsx
+Interactive demo with mode selector showing all three authentication modes in one app.
+- **Use Case**: Testing and demonstration
+- **Features**: Switch between all authentication modes
+- **Authentication**: Configurable (wallet-only, optional staking, required staking)
 
 ## Usage
 

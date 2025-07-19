@@ -1,6 +1,6 @@
 import React from 'react';
-import { NEARLogin, useNEARLogin } from './src';
-import type { AuthConfig } from './src';
+import { NEARLogin, useNEARLogin } from '../src';
+import type { AuthConfig } from '../src';
 
 // Example 1: Wallet-only authentication
 const walletOnlyConfig: AuthConfig = {
