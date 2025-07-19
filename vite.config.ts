@@ -5,11 +5,11 @@ import dts from 'vite-plugin-dts'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
-    react(),
+    react() as any,
     dts({
       include: ['src/**/*'],
       exclude: ['src/examples/**/*', 'src/**/*.stories.*', 'src/**/*.test.*']
-    })
+    }) as any
   ],
   build: mode === 'lib' ? {
     lib: {

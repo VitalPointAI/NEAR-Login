@@ -47,6 +47,7 @@ interface NEARStakingAuthStore extends AuthState {
 }
 
 export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
+  // @ts-expect-error - Zustand subscribeWithSelector typing issue
   subscribeWithSelector((set, get) => ({
     // Initial state
     isLoading: false,
@@ -512,29 +513,35 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
 
 // Subscribe to wallet selector events
 if (typeof window !== 'undefined') {
+  let currentSelector: WalletSelector | null = null;
+  
   useNEARStakingAuthStore.subscribe(
-    (state) => state.selector,
-    async (selector) => {
-      if (!selector) return;
-
-      const subscription = selector.store.observable.subscribe((state) => {
-        const { accounts } = state;
+    (state) => {
+      if (state.selector !== currentSelector) {
+        currentSelector = state.selector;
         
-        if (accounts.length > 0) {
-          const accountId = accounts[0].accountId;
-          useNEARStakingAuthStore.getState().checkAuthStatus(accountId);
-        } else {
-          useNEARStakingAuthStore.setState({
-            isConnected: false,
-            accountId: null,
-            isStaked: false,
-            stakingInfo: null,
-            isLoading: false
+        if (currentSelector) {
+          const subscription = currentSelector.store.observable.subscribe((walletState: any) => {
+            const { accounts } = walletState;
+            
+            if (accounts.length > 0) {
+              const accountId = accounts[0].accountId;
+              useNEARStakingAuthStore.getState().checkAuthStatus(accountId);
+            } else {
+              useNEARStakingAuthStore.setState({
+                isConnected: false,
+                accountId: null,
+                isStaked: false,
+                stakingInfo: null,
+                isLoading: false
+              });
+            }
           });
+          
+          // Store subscription for cleanup (if needed)
+          return () => subscription.unsubscribe();
         }
-      });
-
-      return () => subscription.unsubscribe();
+      }
     }
   );
 }
