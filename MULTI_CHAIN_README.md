@@ -2,7 +2,14 @@
 
 This library now supports **Universal Wallet Authentication** using NEAR's Chain Signatures technology. Users can authenticate with **any wallet** (Ethereum, Bitcoin, Solana, XRP, Aptos, Sui, etc.) while leveraging NEAR's Multi-Party Computation (MPC) network for secure cross-chain operations.
 
-## 🌟 What are NEAR Chain Signatures?
+## � Live Demo
+
+Try the interactive multi-chain demo:
+- **Development**: Run `npm run dev` and visit `http://localhost:5174/multi-chain-demo.html`
+- **Features**: Connect to 6+ blockchains with universal wallet support
+- **Interactive**: Experience the complete NEAR Chain Signatures MPC flow
+
+## �🌟 What are NEAR Chain Signatures?
 
 NEAR Chain Signatures enable users to control addresses and sign transactions on any blockchain using NEAR's decentralized MPC network. This means:
 
