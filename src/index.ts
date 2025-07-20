@@ -6,8 +6,8 @@ export { ProtectedRoute } from './components/ProtectedRoute';
 export type { ProtectedRouteProps } from './components/ProtectedRoute';
 
 // Educational components
-export { WalletEducation, EducationTooltip, getDefaultHelpTexts } from './components/WalletEducation';
-export type { HelpTexts, EducationTooltipProps } from './components/WalletEducation';
+export { WalletEducation, EducationTooltip } from './components/WalletEducation';
+export type { EducationTooltipProps } from './components/WalletEducation';
 
 export { GuidedStakingWizard } from './components/GuidedStakingWizard';
 export type { 
@@ -42,6 +42,7 @@ export type {
   AuthConfig,
   ToastNotification,
   UseNEARLogin,
+  HelpTexts,
   // Legacy type exports
   UseNEARLogin as UseNEARStakingAuth,
 } from './types';
@@ -83,6 +84,9 @@ export {
   createNearConnection,
   DEFAULT_NEAR_CONFIG,
 } from './utils/near';
+
+// Help text utilities
+export { getDefaultHelpTexts } from './utils/helpTexts';
 
 // Multi-chain default configurations
 export { DEFAULT_CHAIN_CONFIGS, DEFAULT_DERIVATION_PATHS } from './utils/multi-chain-deriver';

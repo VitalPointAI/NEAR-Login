@@ -182,3 +182,13 @@ export interface UseNEARLogin extends AuthState {
   getUnstakedAmount: () => string;
   getValidatorInfo: () => ValidatorConfig | null;
 }
+
+export interface HelpTexts {
+  walletConnection?: string;
+  staking?: string;
+  networkFees?: string;
+  validatorSelection?: string;
+  stakingAmount?: string;
+  rewards?: string;
+  unstaking?: string;
+}

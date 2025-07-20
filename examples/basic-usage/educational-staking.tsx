@@ -1,6 +1,6 @@
 import React from 'react';
-import { NEARLogin } from '../src';
-import type { AuthConfig } from '../src';
+import { NEARLogin } from '../../src';
+import type { AuthConfig } from '../../src';
 
 // Example with educational tooltips and help text
 const config: AuthConfig = {
@@ -17,7 +17,7 @@ const config: AuthConfig = {
 };
 
 function EducationalStakingApp() {
-  const handleToast = ({ title, description, variant }: any) => {
+  const handleToast = ({ title, description, variant }: { title?: string; description?: string; variant?: string }) => {
     console.log(`${variant?.toUpperCase()}: ${title} - ${description}`);
     // In a real app, you'd show this in a toast notification
     alert(`${title}: ${description}`);

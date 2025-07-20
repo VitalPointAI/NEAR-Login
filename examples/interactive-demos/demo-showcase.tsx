@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NEARLogin, useNEARLogin, WalletEducation, GuidedStakingWizard } from '../../src';
+import { NEARLogin, useNEARLogin } from '../../src';
 import type { AuthConfig } from '../../src';
 
 // Demo configurations for different scenarios
@@ -343,10 +343,10 @@ export const NEARLoginDemo: React.FC = () => {
     }
   };
 
-  const handleToast = (toast: any) => {
+  const handleToast = (toast: { type?: string; title?: string; message?: string }) => {
     console.log(`Toast: ${toast.type} - ${toast.title}: ${toast.message}`);
     // In a real app, you'd integrate with your toast notification system
-    alert(`${toast.type.toUpperCase()}: ${toast.title}\n${toast.message}`);
+    alert(`${toast.type?.toUpperCase()}: ${toast.title}\n${toast.message}`);
   };
 
   return (

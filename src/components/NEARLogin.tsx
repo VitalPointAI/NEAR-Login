@@ -1,7 +1,8 @@
 import React, { useEffect, useState, type ReactNode } from 'react';
 import { useNEARStakingAuthStore } from '../store/auth';
-import type { AuthConfig, ToastNotification } from '../types';
-import { WalletEducation, EducationTooltip, getDefaultHelpTexts, type HelpTexts } from './WalletEducation';
+import type { AuthConfig, ToastNotification, HelpTexts } from '../types';
+import { WalletEducation, EducationTooltip } from './WalletEducation';
+import { getDefaultHelpTexts } from '../utils/helpTexts';
 import { GuidedStakingWizard } from './GuidedStakingWizard';
 
 export interface NEARLoginProps {

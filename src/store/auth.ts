@@ -145,7 +145,7 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
           } else {
             set({ isLoading: false });
           }
-        } catch (walletError) {
+        } catch {
           // No wallet selected yet - this is normal, just continue
           console.log('No wallet selected yet, waiting for user interaction');
           set({ isLoading: false });

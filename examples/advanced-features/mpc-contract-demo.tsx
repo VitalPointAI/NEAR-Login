@@ -4,7 +4,7 @@ import {
   useNEARLogin, 
   MPC_CONTRACTS,
   type AuthConfig 
-} from '../src';
+} from '../../src';
 
 /**
  * Demo showing automatic MPC contract selection based on network
@@ -215,7 +215,7 @@ console.log(MPC_CONTRACTS.testnet);  // 'v1.signer-prod.testnet'`}
 }
 
 function DemoContent({ networkId, contractId }: { networkId: string, contractId: string }) {
-  const { accountId, isConnected, signOut } = useNEARLogin();
+  const { accountId, signOut } = useNEARLogin();
 
   return (
     <div style={{ textAlign: 'center', padding: '40px' }}>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { EducationTooltip, getDefaultHelpTexts, type HelpTexts } from './WalletEducation';
-import type { ValidatorConfig } from '../types';
+import { EducationTooltip } from './WalletEducation';
+import { getDefaultHelpTexts } from '../utils/helpTexts';
+import type { ValidatorConfig, HelpTexts } from '../types';
 import './GuidedStakingWizard.css';
 
 export interface StakingWizardStep {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 // Demo Components - import all the examples
 import SimpleWalletDemo from './basic-usage/01-simple-wallet';
@@ -6,7 +6,6 @@ import OptionalStakingDemo from './basic-usage/02-optional-staking';
 import RequiredStakingDemo from './basic-usage/03-required-staking';
 import BeginnerFriendlyDemo from './basic-usage/04-beginner-friendly';
 import MultiChainAutoDemo from './advanced-features/multi-chain-auto';
-import SecurityConfigDemo from './advanced-features/security-configurations';
 import InteractiveDemoShowcase from './interactive-demos/demo-showcase';
 
 const LandingPage: React.FC<{ setPath: (path: string) => void; currentPath: string }> = ({ setPath, currentPath }) => (

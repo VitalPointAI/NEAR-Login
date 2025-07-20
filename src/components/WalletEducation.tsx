@@ -10,17 +10,6 @@ export interface EducationTooltipProps {
   children: React.ReactNode;
 }
 
-export interface HelpTexts {
-  walletConnection?: string;
-  staking?: string;
-  networkFees?: string;
-  validatorSelection?: string;
-  stakingAmount?: string;
-  rewards?: string;
-  unstaking?: string;
-  multiChain?: string;
-}
-
 interface WalletEducationProps {
   showVideo?: boolean;
   topics?: ('what-is-wallet' | 'why-near' | 'how-staking-works' | 'security-tips')[];
@@ -231,16 +220,6 @@ export const WalletEducation: React.FC<WalletEducationProps> = ({
   );
 };
 
-// Helper component for common help texts
-export const getDefaultHelpTexts = (): HelpTexts => ({
-  walletConnection: "A wallet connection allows you to securely interact with this app. Your private keys never leave your wallet.",
-  staking: "Staking means temporarily locking your NEAR tokens to help secure the network and earn rewards (typically 8-12% annually).",
-  networkFees: "Network fees (usually under $0.01) help process your transaction and keep the NEAR network secure.",
-  validatorSelection: "Validators are trusted nodes that process transactions. Choose one with good uptime and reasonable fees.",
-  stakingAmount: "Start with a small amount while learning. You can always stake more later. Minimum is usually 1 NEAR.",
-  rewards: "Staking rewards are earned automatically and compound over time. Rewards are typically distributed daily.",
-  unstaking: "Unstaking takes 2-3 days for security. Your tokens remain yours during this time, just temporarily locked.",
-  multiChain: "Connect once to NEAR and access multiple blockchains through Chain Signatures - no need for multiple wallets!"
-});
+WalletEducation.displayName = 'WalletEducation';
 
 export default WalletEducation;
