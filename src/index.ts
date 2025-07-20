@@ -1,5 +1,5 @@
 // Main components
-export { NEARLogin } from './components/NEARLogin';
+export { NEARLogin, NEARLoginComponent } from './components/NEARLogin';
 export type { NEARLoginProps } from './components/NEARLogin';
 
 export { ProtectedRoute } from './components/ProtectedRoute';

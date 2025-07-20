@@ -31,11 +31,13 @@ pnpm add @vitalpointai/near-login
 
 ### Peer Dependencies
 
-This library requires React and NEAR Wallet Selector:
+This library requires React as a peer dependency:
 
 ```bash
-npm install react react-dom @near-wallet-selector/core @near-wallet-selector/my-near-wallet
+npm install react react-dom
 ```
+
+All NEAR wallet selector dependencies are included automatically.
 
 > **📦 Automated Publishing**: This package is automatically published to npm when new versions are pushed to the main branch. Releases include automated testing, building, and GitHub release creation.
 
@@ -232,7 +234,7 @@ function MyComponent() {
 ### Route Protection
 
 ```tsx
-import { ProtectedRoute } from '@vitalpointai/near-login';
+import { NEARLogin, ProtectedRoute } from '@vitalpointai/near-login';
 
 function App() {
   const config = {
@@ -246,12 +248,23 @@ function App() {
   };
 
   return (
-    <ProtectedRoute config={config}>
-      <div>This content requires authentication and staking</div>
-    </ProtectedRoute>
+    <NEARLogin config={config}>
+      <div>
+        <h1>My App</h1>
+        <ProtectedRoute requireStaking={true}>
+          <div>This content requires staking validation</div>
+        </ProtectedRoute>
+        
+        <ProtectedRoute requireStaking={false}>
+          <div>This content just requires wallet connection</div>
+        </ProtectedRoute>
+      </div>
+    </NEARLogin>
   );
 }
 ```
+
+> **Note**: `ProtectedRoute` must be used within a `NEARLogin` component since it relies on the authentication context.
 
 ## Educational Features 🎓
 
@@ -438,12 +451,19 @@ interface AuthBackendConfig {
 
 ```tsx
 interface NEARLoginProps {
-  config: AuthConfig;                    // Configuration object
+  config: AuthConfig;                    // Configuration object (required)
   children: ReactNode;                   // Content to show when authenticated
-  onToast?: (toast: ToastNotification) => void;  // Toast notifications
+  onToast?: (toast: ToastNotification) => void;  // Toast notification handler
   renderLoading?: () => ReactNode;       // Custom loading component
   renderError?: (error: string, retry: () => void) => ReactNode;  // Custom error component
   renderUnauthorized?: (signIn: () => Promise<void>, stake?: (amount: string) => Promise<void>) => ReactNode;  // Custom unauthorized component
+  
+  // Educational features
+  showHelp?: boolean;                    // Enable help tooltips
+  helpTexts?: Partial<HelpTexts>;        // Custom help text overrides
+  showEducation?: boolean;               // Show educational content for beginners
+  useGuidedStaking?: boolean;            // Use guided staking wizard
+  educationTopics?: ('what-is-wallet' | 'why-near' | 'how-staking-works' | 'security-tips')[];  // Educational topics to show
 }
 ```
 
@@ -451,12 +471,13 @@ interface NEARLoginProps {
 
 ```tsx
 interface ProtectedRouteProps {
-  config: AuthConfig;                    // Configuration object
   children: ReactNode;                   // Protected content
   fallback?: ReactNode;                  // Content to show when not authenticated
-  requireStaking?: boolean;              // Override staking requirement
+  requireStaking?: boolean;              // Override staking requirement (default: checks parent NEARLogin config)
 }
 ```
+
+> **Important**: ProtectedRoute must be used within a NEARLogin component for authentication context.
 ## Hooks
 
 ### useNEARLogin
@@ -678,7 +699,8 @@ import {
   getStakingInfo,
   validateStakingAmount,
   createNearConnection,
-  DEFAULT_NEAR_CONFIG
+  DEFAULT_NEAR_CONFIG,
+  getDefaultHelpTexts
 } from '@vitalpointai/near-login';
 
 // Format NEAR amounts
@@ -696,6 +718,17 @@ const isValid = validateStakingAmount('100', '1'); // amount >= minimum
 
 // Create NEAR connection
 const near = await createNearConnection(DEFAULT_NEAR_CONFIG.testnet);
+
+// Get default help texts
+const defaultTexts = getDefaultHelpTexts();
+console.log(defaultTexts.walletConnection); // Default help text for wallet connection
+console.log(defaultTexts.staking);         // Default help text for staking
+
+// Use with custom overrides
+const customHelpTexts = {
+  ...getDefaultHelpTexts(),
+  staking: "Your custom staking help text"
+};
 ```
 
 ### Custom Components
@@ -732,11 +765,11 @@ You can customize the authentication flow with custom render functions:
 
 Explore complete examples in the `/examples` directory:
 
-- **[educational-staking.tsx](./examples/educational-staking.tsx)** - Complete educational staking flow
-- **[component-showcase.tsx](./examples/component-showcase.tsx)** - Individual educational components
-- **[mpc-contract-demo.tsx](./examples/mpc-contract-demo.tsx)** - Automatic MPC contract selection demo
-- **[basic-auth.tsx](./examples/basic-auth.tsx)** - Simple wallet authentication
-- **[staking-validation.tsx](./examples/staking-validation.tsx)** - Required staking setup
+- **[educational-staking.tsx](./examples/basic-usage/educational-staking.tsx)** - Complete educational staking flow
+- **[component-showcase.tsx](./examples/interactive-demos/component-showcase.tsx)** - Individual educational components
+- **[mpc-contract-demo.tsx](./examples/advanced-features/mpc-contract-demo.tsx)** - Automatic MPC contract selection demo
+- **[simple-wallet.tsx](./examples/basic-usage/01-simple-wallet.tsx)** - Simple wallet authentication
+- **[required-staking.tsx](./examples/basic-usage/03-required-staking.tsx)** - Required staking setup
 
 ### Complete App Example with Educational Features
 
@@ -1097,6 +1130,41 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 - **📧 Contact**: Open an issue for questions and support
 
 ## Changelog
+
+### v1.0.9 - TypeScript Interface Resolution Fix 🔧
+
+**Critical TypeScript Fix:**
+- **TypeScript Compiler Recognition**: Fixed issue where TypeScript compiler incorrectly interpreted `NEARLoginProps` interface
+- **Component Export Enhancement**: Added alternative `NEARLoginComponent` export for improved TypeScript compatibility
+- **Interface Declaration**: Enhanced component typing to ensure TypeScript properly recognizes the `config` prop interface
+- **Development Experience**: Eliminates TypeScript errors when using `<NEARLogin config={authConfig}>` syntax
+
+**What This Fixes:**
+- `Type 'IntrinsicAttributes & AuthConfig' is not assignable to type 'NEARLoginProps'` TypeScript errors
+- TypeScript compiler incorrectly expecting `AuthConfig` properties directly instead of wrapped in `config` prop
+- IDE/Editor TypeScript warnings about component interface mismatches
+- Module export/import TypeScript resolution issues
+
+**Usage Notes:**
+- Use `NEARLogin` (recommended) or `NEARLoginComponent` for maximum compatibility
+- All existing code continues to work unchanged
+- Better TypeScript IntelliSense support in IDEs
+
+### v1.0.8 - Critical Bug Fixes 🐛
+
+**Critical Fixes:**
+- **TypeScript Interface Mismatch**: Resolved duplicate `NEARLoginProps` interfaces causing compilation errors
+- **Runtime Safety**: Added null/undefined checks for config parameter to prevent "Cannot read properties of undefined" errors
+- **Component Safety**: Enhanced error boundaries with meaningful error messages when configuration is missing
+- **Export/Import Consistency**: Fixed type definition conflicts between .d.ts files and component implementations
+
+**What This Fixes:**
+- `TypeError: Cannot read properties of undefined (reading 'sessionConfig')` 
+- TypeScript compiler rejecting valid `<NEARLogin config={authConfig}>` syntax
+- Component crashes when config prop is undefined
+- Interface mismatches in TypeScript projects
+
+**Backward Compatibility**: All existing working code continues to function unchanged.
 
 ### v1.0.5 - Educational Features Release 🎓
 

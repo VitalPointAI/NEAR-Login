@@ -367,4 +367,17 @@ export const NEARLogin: React.FC<NEARLoginProps> = ({
   return <>{children}</>;
 };
 
+// Ensure proper TypeScript inference
+NEARLogin.displayName = 'NEARLogin';
+
+// Create a properly typed wrapper function to ensure TypeScript understands the interface
+const createNEARLogin = () => {
+  const Component: React.FC<NEARLoginProps> = (props: NEARLoginProps) => NEARLogin(props);
+  Component.displayName = 'NEARLogin';
+  return Component;
+};
+
+// Alternative export for TypeScript compatibility
+export const NEARLoginComponent = createNEARLogin();
+
 export default NEARLogin;
