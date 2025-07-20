@@ -49,8 +49,8 @@ const DefaultUnauthorizedComponent = ({
   const [stakeAmount, setStakeAmount] = React.useState('');
   
   // Check if staking is required
-  const requiresStaking = config.requireStaking !== false && config.validator;
-  const stakingRequired = requiresStaking && (config.validator?.required !== false);
+  const requiresStaking = config ? (config.requireStaking !== false && config.validator) : false;
+  const stakingRequired = requiresStaking && (config?.validator?.required !== false);
 
   const handleStake = () => {
     if (stakeAmount && parseFloat(stakeAmount) > 0 && stake) {
@@ -66,9 +66,9 @@ const DefaultUnauthorizedComponent = ({
           <h2 className="text-xl font-semibold mb-4">NEAR Wallet Required</h2>
           <p className="text-gray-600 mb-6">
             Please connect your NEAR wallet to continue.
-            {stakingRequired && config.validator && (
+            {stakingRequired && config?.validator && (
               <span> You'll need to have tokens staked with{' '}
-                <strong>{config.validator.displayName || config.validator.poolId}</strong> to access this application.
+                <strong>{config.validator?.displayName || config.validator?.poolId}</strong> to access this application.
               </span>
             )}
           </p>
@@ -210,8 +210,8 @@ export const NEARLogin: React.FC<NEARLoginProps> = ({
   }
 
   // Determine authentication requirements
-  const requiresStaking = config.requireStaking !== false && config.validator;
-  const stakingRequired = requiresStaking && (config.validator?.required !== false);
+  const requiresStaking = config ? (config.requireStaking !== false && config.validator) : false;
+  const stakingRequired = requiresStaking && (config?.validator?.required !== false);
   
   // Check if user meets authentication requirements
   const isFullyAuthenticated = isConnected && (stakingRequired ? (isAuthenticated && isStaked) : isAuthenticated);
