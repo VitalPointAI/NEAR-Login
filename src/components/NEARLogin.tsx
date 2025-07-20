@@ -319,7 +319,11 @@ export const NEARLogin: React.FC<NEARLoginProps> = ({
   }, [onToast, setToastHandler]);
 
   useEffect(() => {
-    initialize(config);
+    if (config) {
+      initialize(config);
+    } else {
+      console.error('NEARLogin: config prop is required');
+    }
   }, [config, initialize]);
 
   // Show loading while initializing
@@ -327,7 +331,11 @@ export const NEARLogin: React.FC<NEARLoginProps> = ({
     return <>{renderLoading()}</>;
   }
 
-  // Show error if initialization failed
+  // Show error if initialization failed or config is missing
+  if (!config) {
+    return <>{renderError('Configuration is required for NEARLogin component', () => {})}</>;
+  }
+
   if (error && !isConnected) {
     return <>{renderError(error, () => initialize(config))}</>;
   }

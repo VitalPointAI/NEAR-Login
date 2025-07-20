@@ -140,15 +140,6 @@ export interface ToastNotification {
   duration?: number;
 }
 
-export interface NEARLoginProps {
-  children: ReactNode;
-  config: AuthConfig;
-  onToast?: (toast: ToastNotification) => void;
-  renderLoading?: () => ReactNode;
-  renderError?: (error: string, retry: () => void) => ReactNode;
-  renderUnauthorized?: (signIn: () => Promise<void>, stake?: (amount: string) => Promise<void>, config?: AuthConfig) => ReactNode;
-}
-
 export interface ProtectedRouteProps {
   children: ReactNode;
   fallback?: ReactNode;

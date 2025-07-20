@@ -72,6 +72,10 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
       const state = get();
       if (state.selector) return; // Already initialized
 
+      if (!config) {
+        throw new Error('AuthConfig is required for initialization');
+      }
+
       try {
         set({ isLoading: true, error: null, config });
 
