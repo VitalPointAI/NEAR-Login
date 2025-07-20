@@ -1,0 +1,691 @@
+/* Guided Staking Wizard Styles */
+
+.staking-wizard {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.staking-wizard--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+/* Wizard Header */
+.wizard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  position: relative;
+}
+
+.wizard-header h2 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.wizard-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.wizard-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Progress Steps */
+.wizard-progress {
+  position: relative;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  position: relative;
+}
+
+.progress-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: -50%;
+  left: 50%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 0;
+}
+
+.progress-step.completed:not(:last-child)::after {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.progress-step__circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1;
+  position: relative;
+}
+
+.progress-step.active .progress-step__circle {
+  background: white;
+  color: #667eea;
+}
+
+.progress-step.completed .progress-step__circle {
+  background: rgba(255, 255, 255, 0.9);
+  color: #4caf50;
+}
+
+.progress-step__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.step-description {
+  font-size: 12px;
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Wizard Content */
+.wizard-content {
+  padding: 32px;
+}
+
+.staking-step {
+  text-align: center;
+}
+
+.staking-step__icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.staking-step h3 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.staking-step p {
+  margin: 0 0 24px 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Benefits Grid */
+.staking-benefits {
+  text-align: left;
+  margin: 24px 0;
+}
+
+.staking-benefits h4 {
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+  font-size: 18px;
+}
+
+.staking-benefits__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.benefit-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9ff;
+  border: 1px solid #e3f2fd;
+  border-radius: 12px;
+}
+
+.benefit-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.benefit-card strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #1565c0;
+  font-size: 14px;
+}
+
+.benefit-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* Education Link */
+.staking-education {
+  margin: 20px 0;
+}
+
+.education-link {
+  background: none;
+  border: 1px solid #1976d2;
+  color: #1976d2;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.education-link:hover {
+  background: #1976d2;
+  color: white;
+}
+
+/* Amount Selector */
+.amount-selector {
+  text-align: left;
+  margin: 24px 0;
+}
+
+.preset-amounts h4 {
+  margin: 0 0 12px 0;
+  color: #1a1a1a;
+  font-size: 16px;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.preset-btn {
+  padding: 12px 8px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.preset-btn:hover {
+  border-color: #1976d2;
+  background: #f3f8ff;
+}
+
+.preset-btn.selected {
+  border-color: #1976d2;
+  background: #1976d2;
+  color: white;
+}
+
+.custom-amount {
+  margin-top: 16px;
+}
+
+.custom-toggle {
+  background: none;
+  border: 1px dashed #ccc;
+  color: #666;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.custom-toggle:hover {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.custom-input {
+  margin-top: 12px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.amount-input {
+  flex: 1;
+  padding: 12px 60px 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.amount-input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.input-suffix {
+  position: absolute;
+  right: 16px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Amount Summary */
+.amount-summary {
+  margin: 24px 0;
+}
+
+.summary-card {
+  background: #f8f9ff;
+  border: 1px solid #e3f2fd;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: left;
+}
+
+.summary-card h4 {
+  margin: 0 0 12px 0;
+  color: #1565c0;
+  font-size: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.summary-row:last-of-type {
+  margin-bottom: 12px;
+}
+
+.reward-highlight {
+  color: #4caf50;
+}
+
+.summary-note {
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.summary-note small {
+  color: #666;
+  font-size: 13px;
+}
+
+/* Final Summary */
+.final-summary {
+  background: #f8f9ff;
+  border: 2px solid #1976d2;
+  border-radius: 12px;
+  margin: 24px 0;
+  overflow: hidden;
+}
+
+.summary-header {
+  background: #1976d2;
+  color: white;
+  padding: 12px 20px;
+}
+
+.summary-header h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.summary-content {
+  padding: 20px;
+}
+
+/* Understanding Checklist */
+.understanding-checklist {
+  text-align: left;
+  margin: 24px 0;
+}
+
+.understanding-checklist h4 {
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+  font-size: 16px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #f8f9ff;
+  border-radius: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+  background: #4caf50;
+  border-color: #4caf50;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.info-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.info-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Step Actions */
+.step-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.staking-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.staking-btn--primary {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white;
+}
+
+.staking-btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.staking-btn--primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.staking-btn--secondary {
+  background: transparent;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+.staking-btn--secondary:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.staking-btn--final {
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  font-size: 18px;
+  padding: 14px 28px;
+}
+
+/* Skip Button */
+.wizard-skip {
+  text-align: center;
+  padding: 16px 32px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.skip-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.skip-btn:hover {
+  color: #1976d2;
+}
+
+/* Loading State */
+.loading-content {
+  text-align: center;
+  padding: 40px;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+.loading-content h3 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+}
+
+.loading-content p {
+  margin: 0 0 4px 0;
+  color: #666;
+}
+
+.loading-note {
+  font-size: 14px !important;
+  color: #888 !important;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .staking-wizard {
+    margin: 16px;
+    border-radius: 12px;
+  }
+  
+  .wizard-header {
+    padding: 20px;
+  }
+  
+  .wizard-content {
+    padding: 24px;
+  }
+  
+  .progress-steps {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .progress-step:not(:last-child)::after {
+    display: none;
+  }
+  
+  .step-description {
+    white-space: normal;
+  }
+  
+  .staking-benefits__grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .preset-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .step-actions {
+    flex-direction: column;
+  }
+  
+  .staking-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .wizard-header h2 {
+    font-size: 20px;
+  }
+  
+  .staking-step h3 {
+    font-size: 20px;
+  }
+  
+  .staking-step__icon {
+    font-size: 40px;
+  }
+  
+  .preset-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .staking-wizard {
+    background: #1a1a1a;
+    color: white;
+  }
+  
+  .staking-step h3,
+  .staking-benefits h4,
+  .understanding-checklist h4,
+  .summary-card h4 {
+    color: white;
+  }
+  
+  .staking-step p,
+  .summary-note small {
+    color: #ccc;
+  }
+  
+  .benefit-card {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+  
+  .amount-input {
+    background: #2a2a2a;
+    border-color: #444;
+    color: white;
+  }
+  
+  .preset-btn {
+    background: #2a2a2a;
+    border-color: #444;
+    color: white;
+  }
+  
+  .summary-card,
+  .final-summary {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+  
+  .checklist-item {
+    background: #2a2a2a;
+  }
+}

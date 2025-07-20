@@ -5,6 +5,18 @@ export type { NEARLoginProps } from './components/NEARLogin';
 export { ProtectedRoute } from './components/ProtectedRoute';
 export type { ProtectedRouteProps } from './components/ProtectedRoute';
 
+// Educational components
+export { WalletEducation, EducationTooltip, getDefaultHelpTexts } from './components/WalletEducation';
+export type { HelpTexts, EducationTooltipProps } from './components/WalletEducation';
+
+export { GuidedStakingWizard } from './components/GuidedStakingWizard';
+export type { 
+  StakingWizardStep, 
+  StakingWizardData, 
+  StakingStepProps,
+  GuidedStakingWizardProps 
+} from './components/GuidedStakingWizard';
+
 // Hooks
 export { useNEARLogin } from './hooks/useNEARLogin';
 
@@ -13,7 +25,7 @@ export { useMultiChainAuth, useSimpleMultiChainAuth } from './hooks/useMultiChai
 
 // Multi-chain authentication classes
 export { MultiChainAuthManager } from './utils/multi-chain-auth';
-export { ChainSignatureContract, createChainSignatureContract } from './utils/chain-signature-contract';
+export { ChainSignatureContract, createChainSignatureContract, MPC_CONTRACTS } from './utils/chain-signature-contract';
 export { MultiChainAddressDeriver } from './utils/multi-chain-deriver';
 
 // Legacy exports (deprecated - use NEARLogin instead)

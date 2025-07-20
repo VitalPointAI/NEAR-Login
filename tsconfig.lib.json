@@ -34,8 +34,6 @@
     "src/**/__tests__/**/*",
     "src/test/**/*",
     "src/examples/**/*",
-    "src/main.tsx",
-    "src/App.tsx",
     "**/*.spec.*"
   ]
 }

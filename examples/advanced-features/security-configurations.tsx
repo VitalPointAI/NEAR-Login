@@ -1,5 +1,5 @@
-import { NEARLogin } from '../src';
-import type { AuthConfig } from '../src';
+import { NEARLogin } from '../../src';
+import type { AuthConfig } from '../../src';
 
 // Example: High Security Configuration for Production
 const highSecurityConfig: AuthConfig = {

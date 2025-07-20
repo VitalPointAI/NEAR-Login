@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEAR Login Widget Demo Showcase</title>
+    <link rel="stylesheet" href="demo-showcase.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel" data-type="module">
+        // Import the demo component (in a real setup, this would be built and bundled)
+        // For now, we'll inline a simplified version for demonstration
+        
+        const { useState, useEffect } = React;
+
+        // Mock NEARLogin component for demo purposes
+        const NEARLogin = ({ 
+          children, 
+          stakingRequired = false, 
+          showHelp = false, 
+          helpTexts = {}, 
+          showEducation = false, 
+          educationTopics = [], 
+          useGuidedStaking = false,
+          onToast = () => {}
+        }) => {
+          const [isConnecting, setIsConnecting] = useState(false);
+          const [showWizard, setShowWizard] = useState(false);
+
+          const handleConnect = () => {
+            setIsConnecting(true);
+            
+            // Simulate connection process
+            setTimeout(() => {
+              setIsConnecting(false);
+              if (stakingRequired && useGuidedStaking) {
+                setShowWizard(true);
+              } else if (stakingRequired) {
+                onToast({
+                  type: 'info',
+                  title: 'Staking Required',
+                  message: 'Please stake tokens to access this application'
+                });
+              } else {
+                onToast({
+                  type: 'success',
+                  title: 'Connected',
+                  message: 'Successfully connected to NEAR Protocol'
+                });
+              }
+            }, 2000);
+          };
+
+          if (showWizard) {
+            return (
+              <div className="near-login-container">
+                <div style={{
+                  padding: '2rem',
+                  border: '2px dashed #e2e8f0',
+                  borderRadius: '12px',
+                  textAlign: 'center',
+                  background: '#f8fafc'
+                }}>
+                  <h3 style={{ color: '#334155', marginBottom: '1rem' }}>
+                    🧙‍♂️ Guided Staking Wizard
+                  </h3>
+                  <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
+                    Step-by-step guidance to stake your NEAR tokens
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setShowWizard(false);
+                      onToast({
+                        type: 'success',
+                        title: 'Staking Complete',
+                        message: 'Welcome to the application!'
+                      });
+                    }}
+                    style={{
+                      background: '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.75rem 1.5rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Complete Wizard
+                  </button>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="near-login-container">
+              {showEducation && educationTopics.length > 0 && (
+                <div style={{
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginBottom: '1rem'
+                }}>
+                  <h4 style={{ color: '#1e40af', margin: '0 0 0.5rem 0' }}>
+                    💡 Learning Topics Available
+                  </h4>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {educationTopics.map(topic => (
+                      <span key={topic} style={{
+                        background: '#dbeafe',
+                        color: '#1e40af',
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '4px',
+                        fontSize: '0.8rem'
+                      }}>
+                        {topic.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {showHelp && Object.keys(helpTexts).length > 0 && (
+                <div style={{
+                  background: '#fef3c7',
+                  border: '1px solid #f59e0b',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginBottom: '1rem'
+                }}>
+                  <h4 style={{ color: '#92400e', margin: '0 0 0.5rem 0' }}>
+                    ❓ Help Available
+                  </h4>
+                  <p style={{ color: '#92400e', fontSize: '0.9rem', margin: 0 }}>
+                    Contextual help is enabled for this configuration
+                  </p>
+                </div>
+              )}
+
+              <button 
+                className="near-login-button" 
+                onClick={handleConnect} 
+                disabled={isConnecting}
+                style={{
+                  opacity: isConnecting ? 0.7 : 1,
+                  cursor: isConnecting ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isConnecting && <span className="loading-spinner"></span>}
+                {isConnecting ? 'Connecting...' : 'Connect with NEAR'}
+              </button>
+              
+              {stakingRequired && (
+                <p style={{
+                  textAlign: 'center',
+                  margin: '0.5rem 0 0 0',
+                  fontSize: '0.8rem',
+                  color: '#64748b'
+                }}>
+                  {useGuidedStaking ? '✨ Guided staking enabled' : '⚡ Expert mode'}
+                </p>
+              )}
+
+              {children}
+            </div>
+          );
+        };
+
+        // Demo Showcase Component
+        const DemoShowcase = () => {
+          const [currentMode, setCurrentMode] = useState('optional-staking');
+          const [isExpertMode, setIsExpertMode] = useState(false);
+          const [toasts, setToasts] = useState([]);
+
+          const demoModes = {
+            'wallet-only': {
+              name: 'Wallet Connection Only',
+              description: 'Basic wallet connection without staking requirements. Perfect for dApps that don\'t require staking.',
+              features: [
+                'Simple wallet connection',
+                'No staking requirements',
+                'Quick onboarding',
+                'Educational tooltips available'
+              ],
+              config: {
+                stakingRequired: false,
+                showHelp: true,
+                helpTexts: {
+                  walletConnection: "Connect your NEAR wallet to get started. Don't have one? We'll help you choose the right option.",
+                },
+                showEducation: true,
+                educationTopics: ['what-is-wallet', 'why-near'],
+                useGuidedStaking: false
+              }
+            },
+            'optional-staking': {
+              name: 'Optional Staking with Benefits',
+              description: 'Users can stake for additional benefits but it\'s not required to use the app.',
+              features: [
+                'Optional staking incentives',
+                'Access without staking',
+                'Benefit explanations',
+                'Flexible user experience'
+              ],
+              config: {
+                stakingRequired: false,
+                showHelp: true,
+                helpTexts: {
+                  walletConnection: "Connect your NEAR wallet to access the app. Staking is optional but provides extra benefits!",
+                  staking: "Stake NEAR tokens to earn rewards and unlock premium features. It's completely optional."
+                },
+                showEducation: true,
+                educationTopics: ['how-staking-works'],
+                useGuidedStaking: false
+              }
+            },
+            'required-staking-guided': {
+              name: 'Required Staking (Guided)',
+              description: 'Staking is required but users get step-by-step guidance through the process.',
+              features: [
+                'Required staking with help',
+                'Step-by-step wizard',
+                'Educational content',
+                'Beginner-friendly onboarding'
+              ],
+              config: {
+                stakingRequired: true,
+                showHelp: true,
+                helpTexts: {
+                  walletConnection: "Connect your NEAR wallet to get started.",
+                  staking: "This app requires staking to participate. Don't worry - we'll guide you through every step!",
+                  stakingAmount: "Start with the minimum amount while you learn. You can always stake more later.",
+                  rewards: "Staking rewards are earned automatically and compound over time.",
+                  validatorSelection: "Validators process transactions and secure the network. Choose one with good uptime.",
+                  networkFees: "Network fees are very small on NEAR (usually less than $0.01)."
+                },
+                showEducation: true,
+                educationTopics: ['what-is-wallet', 'why-near', 'how-staking-works', 'security-tips'],
+                useGuidedStaking: true
+              }
+            },
+            'required-staking-expert': {
+              name: 'Required Staking (Expert)',
+              description: 'For experienced users who don\'t need guidance through the staking process.',
+              features: [
+                'Required staking',
+                'Expert interface',
+                'No guided wizard',
+                'Direct staking access'
+              ],
+              config: {
+                stakingRequired: true,
+                showHelp: false,
+                helpTexts: {},
+                showEducation: false,
+                educationTopics: [],
+                useGuidedStaking: false
+              }
+            },
+            'full-educational': {
+              name: 'Full Educational Mode',
+              description: 'Maximum educational content and help for complete Web3 beginners.',
+              features: [
+                'Comprehensive help system',
+                'All educational topics',
+                'Detailed explanations',
+                'Perfect for beginners'
+              ],
+              config: {
+                stakingRequired: false,
+                showHelp: true,
+                helpTexts: {
+                  walletConnection: "A crypto wallet safely stores your digital assets and lets you interact with blockchain apps. Think of it as a secure digital keychain.",
+                  staking: "Staking means temporarily locking your NEAR tokens to help secure the network. You earn rewards (typically 8-12% annually) and your tokens remain yours.",
+                  stakingAmount: "Start with the minimum amount while you learn. You can always stake more later. Your tokens remain safe in your wallet.",
+                  rewards: "Staking rewards are earned automatically and compound over time. Most validators distribute rewards daily.",
+                  validatorSelection: "Validators process transactions and secure the network. Choose one with good uptime and reasonable fees.",
+                  networkFees: "Network fees are very small on NEAR (usually less than $0.01) and help keep the network secure and fast."
+                },
+                showEducation: true,
+                educationTopics: ['what-is-wallet', 'why-near', 'how-staking-works', 'security-tips'],
+                useGuidedStaking: false
+              }
+            },
+            'custom': {
+              name: 'Custom Configuration',
+              description: 'Fully customizable setup for specific application requirements.',
+              features: [
+                'Flexible configuration',
+                'Custom help texts',
+                'Selective educational topics',
+                'Tailored user experience'
+              ],
+              config: {
+                stakingRequired: false,
+                showHelp: true,
+                helpTexts: {
+                  walletConnection: "Welcome to our custom dApp! Connect your wallet to begin your journey."
+                },
+                showEducation: false,
+                educationTopics: [],
+                useGuidedStaking: false
+              }
+            }
+          };
+
+          const currentConfig = demoModes[currentMode];
+          const finalConfig = isExpertMode && currentMode.includes('staking') 
+            ? { ...currentConfig.config, useGuidedStaking: false, showHelp: false, showEducation: false, educationTopics: [] }
+            : currentConfig.config;
+
+          const handleToast = (toast) => {
+            const newToast = { ...toast, id: Date.now() };
+            setToasts(prev => [...prev, newToast]);
+            setTimeout(() => {
+              setToasts(prev => prev.filter(t => t.id !== newToast.id));
+            }, 4000);
+          };
+
+          return (
+            <div className="demo-showcase">
+              <div className="demo-header">
+                <h1 className="demo-title">NEAR Login Widget Demo</h1>
+                <p className="demo-subtitle">
+                  Interactive showcase of different authentication modes and educational features
+                </p>
+              </div>
+
+              <div className="demo-controls">
+                <div className="demo-control">
+                  <label>Demo Mode</label>
+                  <select value={currentMode} onChange={(e) => setCurrentMode(e.target.value)}>
+                    {Object.entries(demoModes).map(([key, mode]) => (
+                      <option key={key} value={key}>{mode.name}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                {currentMode.includes('staking') && (
+                  <div className="demo-control">
+                    <label>User Experience</label>
+                    <button 
+                      className={!isExpertMode ? 'active' : ''}
+                      onClick={() => setIsExpertMode(false)}
+                    >
+                      Guided
+                    </button>
+                    <button 
+                      className={isExpertMode ? 'active' : ''}
+                      onClick={() => setIsExpertMode(true)}
+                    >
+                      Expert
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="demo-grid">
+                <div className="demo-preview">
+                  <NEARLogin 
+                    {...finalConfig}
+                    onToast={handleToast}
+                  >
+                    <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                      <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                        Demo widget - click to simulate connection
+                      </p>
+                    </div>
+                  </NEARLogin>
+                </div>
+
+                <div className="demo-info">
+                  <h3>{currentConfig.name}</h3>
+                  <p className="description">{currentConfig.description}</p>
+                  
+                  <ul className="features">
+                    {currentConfig.features.map((feature, index) => (
+                      <li key={index}>{feature}</li>
+                    ))}
+                  </ul>
+
+                  <div className="config">
+                    <div className="config-title">Configuration</div>
+                    <div className="config-code">
+                      {JSON.stringify(finalConfig, null, 2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Toast notifications */}
+              <div style={{
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                zIndex: 1000,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+              }}>
+                {toasts.map(toast => (
+                  <div key={toast.id} style={{
+                    background: toast.type === 'success' ? '#10b981' : toast.type === 'error' ? '#ef4444' : '#3b82f6',
+                    color: 'white',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    maxWidth: '300px',
+                    animation: 'slideIn 0.3s ease-out'
+                  }}>
+                    <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>{toast.title}</div>
+                    <div style={{ fontSize: '0.9rem' }}>{toast.message}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<DemoShowcase />, document.getElementById('root'));
+    </script>
+
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</body>
+</html>

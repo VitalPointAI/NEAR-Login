@@ -1,6 +1,8 @@
-import React, { useEffect, type ReactNode } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import { useNEARStakingAuthStore } from '../store/auth';
 import type { AuthConfig, ToastNotification } from '../types';
+import { WalletEducation, EducationTooltip, getDefaultHelpTexts, type HelpTexts } from './WalletEducation';
+import { GuidedStakingWizard } from './GuidedStakingWizard';
 
 export interface NEARLoginProps {
   config: AuthConfig;
@@ -9,6 +11,13 @@ export interface NEARLoginProps {
   renderLoading?: () => ReactNode;
   renderError?: (error: string, retry: () => void) => ReactNode;
   renderUnauthorized?: (signIn: () => Promise<void>, stake?: (amount: string) => Promise<void>) => ReactNode;
+  
+  // Educational features
+  showHelp?: boolean;
+  helpTexts?: Partial<HelpTexts>;
+  showEducation?: boolean;
+  useGuidedStaking?: boolean;
+  educationTopics?: ('what-is-wallet' | 'why-near' | 'how-staking-works' | 'security-tips')[];
 }
 
 const DefaultLoadingComponent = () => (
@@ -39,14 +48,28 @@ const DefaultErrorComponent = ({ error, retry }: { error: string; retry: () => v
 const DefaultUnauthorizedComponent = ({ 
   signIn, 
   stake, 
-  config 
+  config,
+  showHelp = false,
+  helpTexts = {},
+  showEducation = false,
+  useGuidedStaking = false,
+  educationTopics
 }: { 
   signIn: () => Promise<void>; 
   stake?: (amount: string) => Promise<void>;
   config: AuthConfig;
+  showHelp?: boolean;
+  helpTexts?: Partial<HelpTexts>;
+  showEducation?: boolean;
+  useGuidedStaking?: boolean;
+  educationTopics?: ('what-is-wallet' | 'why-near' | 'how-staking-works' | 'security-tips')[];
 }) => {
   const { isConnected, accountId, stakingInfo, isLoading } = useNEARStakingAuthStore();
-  const [stakeAmount, setStakeAmount] = React.useState('');
+  const [stakeAmount, setStakeAmount] = useState('');
+  const [showWizard, setShowWizard] = useState(false);
+  const [showEducationPanel, setShowEducationPanel] = useState(false);
+  
+  const mergedHelpTexts = { ...getDefaultHelpTexts(), ...helpTexts };
   
   // Check if staking is required
   const requiresStaking = config ? (config.requireStaking !== false && config.validator) : false;
@@ -62,16 +85,50 @@ const DefaultUnauthorizedComponent = ({
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center max-w-md">
+          {showEducation && (
+            <WalletEducation
+              topics={educationTopics}
+              compact={false}
+              onComplete={() => setShowEducationPanel(false)}
+            />
+          )}
+          
           <div className="text-6xl mb-4">🔐</div>
-          <h2 className="text-xl font-semibold mb-4">NEAR Wallet Required</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-xl font-semibold mb-4">
+            <EducationTooltip
+              content={mergedHelpTexts.walletConnection!}
+              position="bottom"
+              trigger="hover"
+              showIcon={showHelp}
+            >
+              NEAR Wallet Required
+            </EducationTooltip>
+          </h2>
+          <div className="text-gray-600 mb-6">
             Please connect your NEAR wallet to continue.
             {stakingRequired && config?.validator && (
               <span> You'll need to have tokens staked with{' '}
-                <strong>{config.validator?.displayName || config.validator?.poolId}</strong> to access this application.
+                <EducationTooltip
+                  content={mergedHelpTexts.validatorSelection!}
+                  position="top"
+                  showIcon={showHelp}
+                >
+                  <strong>{config.validator?.displayName || config.validator?.poolId}</strong>
+                </EducationTooltip>
+                {' '}to access this application.
               </span>
             )}
-          </p>
+          </div>
+          
+          {!showEducationPanel && (
+            <button
+              onClick={() => setShowEducationPanel(true)}
+              className="text-sm text-blue-500 underline mb-4 block mx-auto"
+            >
+              💡 New to crypto wallets? Get help
+            </button>
+          )}
+          
           <button
             onClick={signIn}
             disabled={isLoading}
@@ -106,11 +163,59 @@ const DefaultUnauthorizedComponent = ({
   }
 
   // Staking is required
+  if (useGuidedStaking && config.validator) {
+    return showWizard ? (
+      <GuidedStakingWizard
+        validator={config.validator}
+        minStake={config.validator.minStake || '1'}
+        onComplete={async (amount: string) => {
+          if (stake) {
+            await stake(amount);
+          }
+          setShowWizard(false);
+        }}
+        onCancel={() => setShowWizard(false)}
+        helpTexts={helpTexts}
+      />
+    ) : (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-4">🥩</div>
+          <h2 className="text-xl font-semibold mb-4">Staking Required</h2>
+          <p className="text-gray-600 mb-6">
+            Welcome <strong>{accountId}</strong>! To access this application, you need to stake NEAR tokens.
+          </p>
+          <button
+            onClick={() => setShowWizard(true)}
+            className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors mb-4"
+          >
+            🚀 Start Guided Setup
+          </button>
+          <br />
+          <button
+            onClick={() => useNEARStakingAuthStore.getState().signOut()}
+            className="text-sm text-gray-500 underline"
+          >
+            Disconnect Wallet
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center max-w-md">
         <div className="text-6xl mb-4">🥩</div>
-        <h2 className="text-xl font-semibold mb-4">Staking Required</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          <EducationTooltip
+            content={mergedHelpTexts.staking!}
+            position="bottom"
+            showIcon={showHelp}
+          >
+            Staking Required
+          </EducationTooltip>
+        </h2>
         <p className="text-gray-600 mb-4">
           Welcome <strong>{accountId}</strong>! To access this application, you need to stake NEAR tokens with{' '}
           <strong>{config.validator?.displayName || config.validator?.poolId}</strong>.
@@ -128,7 +233,13 @@ const DefaultUnauthorizedComponent = ({
 
         <div className="mb-4">
           <label htmlFor="stakeAmount" className="block text-sm font-medium text-gray-700 mb-2">
-            Amount to Stake (NEAR)
+            <EducationTooltip
+              content={mergedHelpTexts.stakingAmount!}
+              position="top"
+              showIcon={showHelp}
+            >
+              Amount to Stake (NEAR)
+            </EducationTooltip>
           </label>
           <input
             id="stakeAmount"
@@ -140,6 +251,11 @@ const DefaultUnauthorizedComponent = ({
             onChange={(e) => setStakeAmount(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          {showHelp && (
+            <p className="text-xs text-gray-500 mt-1">
+              💡 Tip: Start with a small amount while you learn. You can always stake more later!
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -175,7 +291,13 @@ export const NEARLogin: React.FC<NEARLoginProps> = ({
   onToast,
   renderLoading = DefaultLoadingComponent,
   renderError = (error, retry) => <DefaultErrorComponent error={error} retry={retry} />,
-  renderUnauthorized = (signIn, stake) => <DefaultUnauthorizedComponent signIn={signIn} stake={stake} config={config} />,
+  
+  // Educational props
+  showHelp = false,
+  helpTexts = {},
+  showEducation = false,
+  useGuidedStaking = false,
+  educationTopics,
 }) => {
   const {
     isLoading,
@@ -218,7 +340,18 @@ export const NEARLogin: React.FC<NEARLoginProps> = ({
 
   // Show unauthorized if requirements not met
   if (!isFullyAuthenticated) {
-    return <>{renderUnauthorized(signIn, stakingRequired ? stakeTokens : undefined)}</>;
+    return (
+      <DefaultUnauthorizedComponent 
+        signIn={signIn} 
+        stake={stakingRequired ? stakeTokens : undefined} 
+        config={config}
+        showHelp={showHelp}
+        helpTexts={helpTexts}
+        showEducation={showEducation}
+        useGuidedStaking={useGuidedStaking}
+        educationTopics={educationTopics}
+      />
+    );
   }
 
   // User is authenticated - show the protected content

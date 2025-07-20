@@ -5,12 +5,13 @@
 [![npm downloads](https://img.shields.io/npm/dm/@vitalpointai/near-login.svg)](https://www.npmjs.com/package/@vitalpointai/near-login)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A flexible React authentication library for NEAR Protocol with optional staking validation, multi-chain support, and session management.
+A flexible React authentication library for NEAR Protocol with optional staking validation, multi-chain support, and **educational onboarding features** designed to simplify Web3 for mainstream users.
 
 ## Features
 
 - **🔐 NEAR Authentication**: Seamless wallet integration with NEAR Wallet Selector
 - **🥩 Staking Validation**: Optional or required staking with configurable validator pools
+- **🎓 Educational Components**: Built-in tooltips, guided wizards, and progressive onboarding for crypto beginners
 - **🔗 Multi-Chain Support**: Chain signature functionality for cross-chain transactions
 - **⚛️ React Components**: Ready-to-use components with customizable UI
 - **🪝 React Hooks**: Powerful hooks for authentication state management
@@ -47,8 +48,99 @@ import { NEARLogin } from '@vitalpointai/near-login';
 
 function App() {
   const config = {
-    networkId: 'testnet',
-    contractId: 'your-contract.testnet'
+    // Minimal configuration - only wallet connection required
+    // No networkId required - defaults to 'testnet'
+  };
+
+  return (
+    <NEARLogin config={config}>
+      <div>
+        <h1>My NEAR App</h1>
+        <p>This content is shown when authenticated</p>
+      </div>
+    </NEARLogin>
+  );
+}
+```
+
+### With Educational Features (Recommended for New Users) 🎓
+
+```tsx
+import { NEARLogin } from '@vitalpointai/near-login';
+
+function App() {
+  const config = {
+    nearConfig: { networkId: 'testnet' }
+  };
+
+  return (
+    <NEARLogin 
+      config={config}
+      showHelp={true}  // Enable help tooltips
+      helpTexts={{
+        walletConnection: "Connect your NEAR wallet to access this app. Your keys never leave your wallet!",
+        staking: "Staking helps secure the network and earns you rewards (typically 8-12% annually)."
+      }}
+      showEducation={true}  // Show educational content for beginners
+      educationTopics={['what-is-wallet', 'why-near', 'security-tips']}
+      useGuidedStaking={true}  // Use step-by-step staking wizard
+    >
+      <div>
+        <h1>My NEAR App</h1>
+        <p>This content is shown when authenticated</p>
+      </div>
+    </NEARLogin>
+  );
+}
+```
+
+### Individual Educational Components
+
+```tsx
+import { EducationTooltip, WalletEducation, GuidedStakingWizard } from '@vitalpointai/near-login';
+
+function MyComponent() {
+  return (
+    <div>
+      {/* Add helpful tooltips anywhere */}
+      <EducationTooltip
+        content="A crypto wallet is like a secure digital keychain for your tokens."
+        title="What is a wallet?"
+        position="top"
+      >
+        <button>Connect Wallet</button>
+      </EducationTooltip>
+
+      {/* Progressive education for beginners */}
+      <WalletEducation
+        topics={['what-is-wallet', 'why-near', 'how-staking-works']}
+        onComplete={() => console.log('Education completed!')}
+      />
+
+      {/* Guided staking wizard */}
+      <GuidedStakingWizard
+        validator={{ poolId: 'validator.pool.near', displayName: 'My Validator' }}
+        onComplete={(amount) => console.log(`Staking ${amount} NEAR`)}
+        onCancel={() => console.log('Staking cancelled')}
+      />
+    </div>
+  );
+}
+```
+
+### With Network Selection
+
+```tsx
+import { NEARLogin } from '@vitalpointai/near-login';
+
+function App() {
+  const config = {
+    nearConfig: {
+      networkId: 'testnet'  // or 'mainnet'
+    },
+    walletConnectOptions: {
+      contractId: 'your-contract.testnet'
+    }
   };
 
   return (
@@ -69,18 +161,27 @@ import { NEARLogin } from '@vitalpointai/near-login';
 
 function App() {
   const config = {
-    networkId: 'testnet',
-    contractId: 'your-contract.testnet',
     requireStaking: true,
     validator: {
       poolId: 'validator.pool.near',
       minStake: '100'  // Minimum 100 NEAR staked
+    },
+    nearConfig: {
+      networkId: 'testnet'
+    },
+    walletConnectOptions: {
+      contractId: 'your-contract.testnet'
     }
   };
 
   return (
     <NEARLogin 
       config={config}
+      useGuidedStaking={true}  // Use the guided wizard for easier staking
+      showHelp={true}
+      helpTexts={{
+        staking: "This app requires staking to access premium features. You'll earn rewards while staked!"
+      }}
       onToast={(toast) => console.log('Notification:', toast)}
     >
       <div>
@@ -105,7 +206,7 @@ function MyComponent() {
     accountId,
     signIn,
     signOut,
-    stakeTokens
+    stake
   } = useNEARLogin();
 
   if (!isConnected) {
@@ -118,7 +219,7 @@ function MyComponent() {
       {isStaked ? (
         <p>✅ Staking validated</p>
       ) : (
-        <button onClick={() => stakeTokens('100')}>
+        <button onClick={() => stake('100')}>
           Stake 100 NEAR
         </button>
       )}
@@ -135,9 +236,13 @@ import { ProtectedRoute } from '@vitalpointai/near-login';
 
 function App() {
   const config = {
-    networkId: 'testnet',
     requireStaking: true,
-    validator: { poolId: 'validator.pool.near' }
+    validator: { 
+      poolId: 'validator.pool.near' 
+    },
+    nearConfig: {
+      networkId: 'testnet'
+    }
   };
 
   return (
@@ -148,26 +253,134 @@ function App() {
 }
 ```
 
+## Educational Features 🎓
+
+This library includes comprehensive educational components to help onboard users who are new to Web3 and cryptocurrency:
+
+### Educational Props on NEARLogin
+
+```tsx
+<NEARLogin 
+  config={config}
+  // Enable help tooltips throughout the UI
+  showHelp={true}
+  helpTexts={{
+    walletConnection: "Your custom help text for wallet connection",
+    staking: "Your custom help text for staking process",
+    stakingAmount: "Your custom help text for choosing stake amount",
+    rewards: "Your custom help text about staking rewards"
+  }}
+  
+  // Show educational content for crypto beginners
+  showEducation={true}
+  educationTopics={[
+    'what-is-wallet',      // Explains crypto wallets
+    'why-near',            // Benefits of NEAR Protocol
+    'how-staking-works',   // How staking generates rewards
+    'security-tips'        // Best practices for wallet security
+  ]}
+  
+  // Use guided wizard instead of direct staking UI
+  useGuidedStaking={true}
+>
+  <YourAppContent />
+</NEARLogin>
+```
+
+### Individual Educational Components
+
+Import and use educational components anywhere in your app:
+
+```tsx
+import { 
+  EducationTooltip, 
+  WalletEducation, 
+  GuidedStakingWizard 
+} from '@vitalpointai/near-login';
+
+// Helpful tooltips
+<EducationTooltip
+  content="Detailed explanation text..."
+  title="Tooltip Title"
+  position="top" // top, bottom, left, right
+  trigger="hover" // hover, click
+>
+  <YourTriggerElement />
+</EducationTooltip>
+
+// Progressive education flow
+<WalletEducation
+  topics={['what-is-wallet', 'why-near']}
+  showVideo={false} // Optional video content
+  onComplete={() => console.log('Education completed')}
+/>
+
+// Step-by-step staking wizard
+<GuidedStakingWizard
+  validator={{
+    poolId: 'your-validator.pool.near',
+    displayName: 'Your Validator',
+    minStake: '1',
+    description: 'Description of your validator'
+  }}
+  minStake="1"
+  onComplete={(amount) => handleStaking(amount)}
+  onCancel={() => handleCancel()}
+  helpTexts={{
+    staking: "Custom help text for staking step",
+    stakingAmount: "Custom help text for amount selection",
+    rewards: "Custom help text about rewards"
+  }}
+/>
+```
+
 ## Configuration
 
 ### AuthConfig Interface
 
 ```tsx
 interface AuthConfig {
-  // Required
-  networkId: 'mainnet' | 'testnet';
-  
-  // Optional
-  contractId?: string;
-  requireStaking?: boolean;
+  // Validator configuration (optional)
   validator?: ValidatorConfig;
+  
+  // NEAR network configuration (optional - defaults provided)
+  nearConfig?: Partial<NEARConfig>;
+  
+  // Backend integration (optional)
+  backend?: AuthBackendConfig;
+  
+  // Wallet connection options (optional)
+  walletConnectOptions?: {
+    contractId?: string;
+    theme?: 'auto' | 'light' | 'dark';
+  };
+  
+  // Session configuration (optional)
+  sessionConfig?: {
+    duration?: number;        // Session duration in milliseconds (DEPRECATED - use sessionSecurity.maxAge)
+    storageKey?: string;      // Local storage key for session
+    rememberSession?: boolean; // Whether to persist sessions across browser sessions (default: true)
+  };
+  
+  // Enhanced security configuration (optional)
   sessionSecurity?: SessionSecurityConfig;
-  nodeUrl?: string;
-  walletUrl?: string;
-  helperUrl?: string;
-  explorerUrl?: string;
-  maxAge?: number;          // Session duration in milliseconds
-  refreshThreshold?: number; // When to refresh session
+  
+  // Global staking requirement (optional)
+  requireStaking?: boolean;   // Global flag to require staking (default: true if validator provided, false otherwise)
+  
+  // Multi-chain configuration (optional)
+  chainSignature?: {
+    contractId?: string;      // Optional - auto-selected: 'v1.signer' (mainnet) or 'v1.signer-prod.testnet' (testnet)
+    supportedChains?: string[]; // Optional - chains to enable for multi-chain signatures
+  };
+}
+
+interface NEARConfig {
+  networkId: 'mainnet' | 'testnet';
+  nodeUrl: string;
+  walletUrl: string;
+  helperUrl: string;
+  explorerUrl: string;
 }
 
 interface ValidatorConfig {
@@ -176,6 +389,46 @@ interface ValidatorConfig {
   description?: string;     // Validator description
   required?: boolean;       // Whether staking is required (default: true)
   minStake?: string;        // Minimum stake amount in NEAR
+}
+
+interface SessionSecurityConfig {
+  // Session expiration and refresh
+  maxAge?: number;          // Maximum session age in milliseconds (default: 7 days)
+  idleTimeout?: number;     // Idle timeout in milliseconds (default: 24 hours)
+  refreshThreshold?: number; // Refresh token when this close to expiration (default: 25% of maxAge)
+  
+  // Device and location binding
+  deviceFingerprinting?: boolean; // Enable device fingerprinting (default: true)
+  bindToIP?: boolean;       // Bind session to IP address (default: false - can break mobile)
+  requireReauth?: number;   // Require re-authentication after this time in milliseconds
+  
+  // Storage security
+  encryptStorage?: boolean; // Encrypt session data in localStorage (default: true)
+  secureStorage?: boolean;  // Use sessionStorage instead of localStorage (default: false)
+  
+  // Session validation
+  validateOnFocus?: boolean; // Validate session when window gains focus (default: true)
+  validateInterval?: number; // Background validation interval in milliseconds (default: 5 minutes)
+  validateWithBackend?: string; // Backend endpoint for session validation
+  
+  // Cleanup and rotation
+  rotateTokens?: boolean;   // Rotate session tokens periodically (default: false)
+  preventConcurrent?: boolean; // Prevent multiple concurrent sessions (default: false)
+  clearOnError?: boolean;   // Clear session on authentication errors (default: true)
+  
+  // Event handlers
+  onSecurityViolation?: (violation: SecurityViolation) => void;
+  onSessionExpired?: () => void;
+  
+  // Development vs Production
+  allowInsecure?: boolean;  // Allow insecure practices in development (default: false)
+}
+
+interface AuthBackendConfig {
+  backendUrl?: string;
+  sessionEndpoint?: string;
+  verifyEndpoint?: string;
+  stakingEndpoint?: string;
 }
 ```
 
@@ -228,13 +481,19 @@ const {
   // Actions
   signIn,             // () => Promise<void> - connect wallet
   signOut,            // () => Promise<void> - disconnect wallet
-  stakeTokens,        // (amount: string) => Promise<void> - stake NEAR
-  unstakeTokens,      // (amount: string) => Promise<void> - unstake NEAR
-  refreshStakingInfo, // () => Promise<void> - refresh staking data
+  stake,              // (amount: string) => Promise<void> - stake NEAR (renamed from stakeTokens)
+  unstake,            // (amount: string) => Promise<void> - unstake NEAR (renamed from unstakeTokens)
+  refresh,            // () => Promise<void> - refresh staking data
+  initialize,         // (config: AuthConfig) => Promise<void> - initialize with config
   
   // Computed values
   canStake,           // boolean - can perform staking
   requiresStaking,    // boolean - staking is required by config
+  
+  // Utilities
+  getStakedAmount,    // () => string - get staked amount
+  getUnstakedAmount,  // () => string - get unstaked amount
+  getValidatorInfo,   // () => ValidatorConfig | null - get validator info
 } = useNEARLogin();
 ```
 
@@ -284,13 +543,19 @@ interface UseNEARLogin {
   // Actions
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
-  stakeTokens: (amount: string) => Promise<void>;
-  unstakeTokens: (amount: string) => Promise<void>;
-  refreshStakingInfo: () => Promise<void>;
+  stake: (amount: string) => Promise<void>;
+  unstake: (amount: string) => Promise<void>;
+  refresh: () => Promise<void>;
+  initialize: (config: AuthConfig) => Promise<void>;
   
   // Computed
   canStake: boolean;
   requiresStaking: boolean;
+  
+  // Utilities
+  getStakedAmount: () => string;
+  getUnstakedAmount: () => string;
+  getValidatorInfo: () => ValidatorConfig | null;
 }
 ```
 
@@ -323,22 +588,40 @@ interface ToastNotification {
 
 ### Multi-Chain Authentication
 
-The library supports cross-chain authentication using NEAR's chain signature functionality:
+The library supports cross-chain authentication using NEAR's chain signature functionality with automatic MPC contract selection:
 
 ```tsx
 import { 
   useMultiChainAuth,
   MultiChainAuthManager,
   ChainSignatureContract,
+  MPC_CONTRACTS,
   DEFAULT_CHAIN_CONFIGS 
 } from '@vitalpointai/near-login';
 
-// Setup multi-chain authentication
+// MPC contracts are automatically selected based on network:
+// Mainnet: 'v1.signer'
+// Testnet: 'v1.signer-prod.testnet'
+console.log(MPC_CONTRACTS.mainnet);  // 'v1.signer'
+console.log(MPC_CONTRACTS.testnet);  // 'v1.signer-prod.testnet'
+
+// Basic setup - contract ID is auto-selected based on networkId
 const config = {
+  networkId: 'testnet', // or 'mainnet'
+  chainSignature: {
+    // contractId is automatically set to 'v1.signer-prod.testnet' for testnet
+    // or 'v1.signer' for mainnet
+    supportedChains: ['ethereum', 'bitcoin', 'solana'],
+  }
+};
+
+// Optional: Override with custom MPC contract
+const customConfig = {
   networkId: 'testnet',
   chainSignature: {
-    contractId: 'v1.signer-prod.testnet',
-    supportedChains: ['ethereum', 'bitcoin', 'solana'],
+    contractId: 'my-custom-mpc.testnet', // Override default
+    supportedChains: ['ethereum', 'bitcoin'],
+  }
   }
 };
 
@@ -354,6 +637,33 @@ await multiChain.connectMultipleChains(['ethereum', 'bitcoin']);
 // Sign messages for different chains
 const ethSignature = await multiChain.signAuthMessage('ethereum');
 const btcSignature = await multiChain.signAuthMessage('bitcoin');
+```
+
+#### Automatic MPC Contract Selection
+
+The library automatically selects the correct MPC contract based on your network configuration:
+
+```tsx
+// No need to specify contractId - automatically selected!
+const config = {
+  nearConfig: { networkId: 'mainnet' }, // Uses 'v1.signer'
+  chainSignature: {
+    supportedChains: ['ethereum', 'bitcoin']
+  }
+};
+
+// Or for testnet
+const testnetConfig = {
+  nearConfig: { networkId: 'testnet' }, // Uses 'v1.signer-prod.testnet'
+  chainSignature: {
+    supportedChains: ['ethereum', 'bitcoin']
+  }
+};
+
+// Access contract IDs directly if needed
+import { MPC_CONTRACTS } from '@vitalpointai/near-login';
+console.log(MPC_CONTRACTS.mainnet);  // 'v1.signer'
+console.log(MPC_CONTRACTS.testnet);  // 'v1.signer-prod.testnet'
 ```
 
 ### Utility Functions
@@ -420,7 +730,15 @@ You can customize the authentication flow with custom render functions:
 ```
 ## Examples
 
-### Complete App Example
+Explore complete examples in the `/examples` directory:
+
+- **[educational-staking.tsx](./examples/educational-staking.tsx)** - Complete educational staking flow
+- **[component-showcase.tsx](./examples/component-showcase.tsx)** - Individual educational components
+- **[mpc-contract-demo.tsx](./examples/mpc-contract-demo.tsx)** - Automatic MPC contract selection demo
+- **[basic-auth.tsx](./examples/basic-auth.tsx)** - Simple wallet authentication
+- **[staking-validation.tsx](./examples/staking-validation.tsx)** - Required staking setup
+
+### Complete App Example with Educational Features
 
 ```tsx
 import React from 'react';
@@ -428,7 +746,7 @@ import { NEARLogin, useNEARLogin } from '@vitalpointai/near-login';
 
 // Protected content component
 function Dashboard() {
-  const { accountId, isStaked, stakingInfo, stakeTokens, signOut } = useNEARLogin();
+  const { accountId, isStaked, stakingInfo, stake, signOut } = useNEARLogin();
 
   return (
     <div>
@@ -443,7 +761,7 @@ function Dashboard() {
       ) : (
         <div>
           <p>❌ Staking Required</p>
-          <button onClick={() => stakeTokens('100')}>
+          <button onClick={() => stake('100')}>
             Stake 100 NEAR
           </button>
         </div>
@@ -454,17 +772,21 @@ function Dashboard() {
   );
 }
 
-// Main app component
+// Main app component with educational features
 function App() {
   const config = {
-    networkId: 'testnet' as const,
-    contractId: 'your-contract.testnet',
     requireStaking: true,
     validator: {
       poolId: 'vitalpoint.pool.near',
       minStake: '100',
       displayName: 'VitalPoint Validator',
       required: true
+    },
+    nearConfig: {
+      networkId: 'testnet'
+    },
+    walletConnectOptions: {
+      contractId: 'your-contract.testnet'
     }
   };
 
@@ -477,6 +799,17 @@ function App() {
     <NEARLogin 
       config={config}
       onToast={handleToast}
+      // Educational features for better user onboarding
+      showHelp={true}
+      helpTexts={{
+        walletConnection: "Connect your NEAR wallet to access premium features. Your private keys never leave your wallet!",
+        staking: "This app requires staking 100 NEAR to access. You'll earn ~10% annual rewards on your staked tokens.",
+        stakingAmount: "Start with the minimum required amount. You can always add more later.",
+        rewards: "Rewards are automatically compounded and can be claimed anytime."
+      }}
+      showEducation={true}
+      educationTopics={['what-is-wallet', 'why-near', 'how-staking-works', 'security-tips']}
+      useGuidedStaking={true}  // Use wizard instead of direct staking UI
     >
       <Dashboard />
     </NEARLogin>
@@ -489,13 +822,16 @@ export default App;
 ### Using with Next.js
 
 ```tsx
+```tsx
 // pages/_app.tsx or app/layout.tsx
 import { NEARLogin } from '@vitalpointai/near-login';
 
 export default function MyApp({ Component, pageProps }) {
   const config = {
-    networkId: 'mainnet' as const,
-    requireStaking: false  // Optional staking
+    requireStaking: false,  // Optional staking
+    nearConfig: {
+      networkId: 'mainnet'
+    }
   };
 
   return (
@@ -504,6 +840,7 @@ export default function MyApp({ Component, pageProps }) {
     </NEARLogin>
   );
 }
+```
 
 // pages/protected.tsx
 import { useNEARLogin, ProtectedRoute } from '@vitalpointai/near-login';
@@ -525,7 +862,12 @@ function ProtectedPage() {
 
 // Alternatively, use ProtectedRoute component
 function AltProtectedPage() {
-  const config = { networkId: 'mainnet' as const, requireStaking: true };
+  const config = { 
+    requireStaking: true,
+    nearConfig: {
+      networkId: 'mainnet'
+    }
+  };
 
   return (
     <ProtectedRoute config={config}>
@@ -756,7 +1098,22 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 
 ## Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md) for version history and breaking changes.
+### v1.0.5 - Educational Features Release 🎓
+
+**New Features:**
+- **Educational Components**: Added `WalletEducation`, `EducationTooltip`, and `GuidedStakingWizard` components
+- **Enhanced NEARLogin**: New props `showHelp`, `helpTexts`, `showEducation`, `educationTopics`, and `useGuidedStaking`
+- **Progressive Onboarding**: Step-by-step education flow for crypto beginners
+- **Guided Staking Wizard**: Three-step wizard to simplify the staking process
+- **Contextual Help**: Tooltips and help text throughout the UI
+
+**Improvements:**
+- Better user experience for Web3 newcomers
+- Reduced cognitive load with progressive disclosure
+- Improved accessibility with proper ARIA labels
+- Mobile-responsive educational components
+
+See [CHANGELOG.md](./CHANGELOG.md) for complete version history and breaking changes.
 
 ---
 

@@ -1,0 +1,339 @@
+/* Wallet Education Component Styles */
+
+.education-tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.education-tooltip-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: help;
+}
+
+.education-tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  background: #e3f2fd;
+  border-radius: 50%;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.education-tooltip-icon:hover {
+  opacity: 1;
+}
+
+.education-tooltip {
+  position: absolute;
+  z-index: 1000;
+  max-width: 280px;
+  padding: 12px;
+  background: #1a1a1a;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+.education-tooltip--top {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.education-tooltip--bottom {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.education-tooltip--left {
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.education-tooltip--right {
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.education-tooltip__title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #90caf9;
+}
+
+.education-tooltip__content {
+  white-space: pre-line;
+}
+
+.education-tooltip__arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.education-tooltip--top .education-tooltip__arrow {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1a1a1a;
+}
+
+.education-tooltip--bottom .education-tooltip__arrow {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #1a1a1a;
+}
+
+.education-tooltip--left .education-tooltip__arrow {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #1a1a1a;
+}
+
+.education-tooltip--right .education-tooltip__arrow {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #1a1a1a;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Wallet Education Main Component */
+.wallet-education {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f8f9ff 100%);
+  border: 1px solid #90caf9;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 20px 0;
+  position: relative;
+  max-width: 500px;
+}
+
+.wallet-education--compact {
+  margin: 16px 0;
+}
+
+.wallet-education__expand-btn {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.wallet-education__expand-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+}
+
+.wallet-education__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.wallet-education__header h3 {
+  margin: 0;
+  color: #1565c0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.wallet-education__progress {
+  display: flex;
+  gap: 8px;
+}
+
+.wallet-education__progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: background-color 0.3s ease;
+}
+
+.wallet-education__progress-dot.active {
+  background: #1976d2;
+}
+
+.wallet-education__content h4 {
+  margin: 0 0 12px 0;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.wallet-education__text {
+  color: #424242;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  white-space: pre-line;
+}
+
+.wallet-education__text > div {
+  margin-bottom: 4px;
+}
+
+.wallet-education__video {
+  margin: 16px 0;
+}
+
+.wallet-education__video-placeholder {
+  background: #f5f5f5;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  color: #666;
+}
+
+.wallet-education__video-placeholder p {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+}
+
+.wallet-education__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.wallet-education__btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.wallet-education__btn--primary {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white;
+}
+
+.wallet-education__btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+}
+
+.wallet-education__btn--secondary {
+  background: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.wallet-education__btn--secondary:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+.wallet-education__minimize {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.wallet-education__minimize:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .wallet-education {
+    margin: 16px;
+    padding: 20px;
+  }
+  
+  .education-tooltip {
+    max-width: 240px;
+    font-size: 13px;
+  }
+  
+  .wallet-education__actions {
+    flex-direction: column;
+  }
+  
+  .wallet-education__btn {
+    width: 100%;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .wallet-education {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+    border-color: #3f51b5;
+    color: white;
+  }
+  
+  .wallet-education__header h3 {
+    color: #90caf9;
+  }
+  
+  .wallet-education__content h4 {
+    color: white;
+  }
+  
+  .wallet-education__text {
+    color: #e3f2fd;
+  }
+  
+  .wallet-education__btn--secondary {
+    color: #e3f2fd;
+    border-color: #666;
+  }
+  
+  .wallet-education__btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #999;
+  }
+}

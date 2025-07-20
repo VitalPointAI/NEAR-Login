@@ -134,14 +134,20 @@ export const useNEARStakingAuthStore = create<NEARStakingAuthStore>()(
           isLoading: false 
         });
 
-        // Check if already signed in to a wallet
-        const wallet = await selector.wallet();
-        const accounts = await wallet.getAccounts();
-        
-        if (accounts.length > 0) {
-          const accountId = accounts[0].accountId;
-          await get().checkAuthStatus(accountId);
-        } else {
+        // Check if already signed in to a wallet (handle case where no wallet is selected)
+        try {
+          const wallet = await selector.wallet();
+          const accounts = await wallet.getAccounts();
+          
+          if (accounts.length > 0) {
+            const accountId = accounts[0].accountId;
+            await get().checkAuthStatus(accountId);
+          } else {
+            set({ isLoading: false });
+          }
+        } catch (walletError) {
+          // No wallet selected yet - this is normal, just continue
+          console.log('No wallet selected yet, waiting for user interaction');
           set({ isLoading: false });
         }
 

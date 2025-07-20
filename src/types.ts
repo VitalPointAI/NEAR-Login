@@ -80,6 +80,12 @@ export interface AuthConfig {
   };
   sessionSecurity?: SessionSecurityConfig; // Enhanced security configuration
   requireStaking?: boolean; // Global flag to require staking (default: true if validator provided, false otherwise)
+  
+  // Multi-chain configuration (optional)
+  chainSignature?: {
+    contractId?: string; // Optional - defaults to 'v1.signer' (mainnet) or 'v1.signer-prod.testnet' (testnet)
+    supportedChains?: string[]; // Optional - chains to enable for multi-chain signatures
+  };
 }
 
 export interface AuthState {

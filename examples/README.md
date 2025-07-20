@@ -1,128 +1,232 @@
-# Examples
+# NEAR Login Examples
 
-This directory contains example implementations of @vitalpointai/near-login in different scenarios.
+This folder contains organized examples showing different ways to use the `@vitalpointai/near-login` library.
 
-## Examples
+## 🚀 Getting Started
 
-### 1. wallet-only.tsx
-Basic wallet authentication without any staking requirements. Perfect for simple NEAR dApps that just need wallet connection.
-- **Use Case**: Simple authentication for dApps
-- **Features**: Wallet connection, logout functionality
-- **Authentication**: Wallet-only (no staking)
+**👉 [Visit the Interactive Demo Landing Page](http://localhost:5177/examples/) to explore all examples with a beautiful visual interface!**
 
-### 2. optional-staking.tsx  
-Shows how to implement optional staking benefits where users can access the app without staking, but get additional features if they do stake.
-- **Use Case**: Freemium model with staking benefits
-- **Features**: Basic access + premium features for stakers
-- **Authentication**: Wallet required, staking optional for benefits
+Or browse the examples directly below:
 
-### 3. required-staking.tsx
-Demonstrates mandatory staking requirements where users must stake tokens to access the application.
-- **Use Case**: Exclusive access for stakers only
-- **Features**: VIP area, staking rewards, premium content
-- **Authentication**: Both wallet and staking required
+## 📁 Folder Structure
 
-### 4. comprehensive-demo.tsx
-Interactive demo with mode selector showing all three authentication modes in one app.
-- **Use Case**: Testing and demonstration
-- **Features**: Switch between all authentication modes
-- **Authentication**: Configurable (wallet-only, optional staking, required staking)
+### `/basic-usage/` - Getting Started Examples
+Perfect for new users and common use cases:
 
-### 5. security-configurations.tsx
-Comprehensive security configuration examples showing different security levels for various use cases.
-- **Use Case**: Production apps requiring secure session management
-- **Features**: High, balanced, and development security configurations
-- **Authentication**: Configurable with advanced security options
-- **Security Levels**:
-  - **High Security**: Financial apps, governance tools (7-day max, 4-hour idle)
-  - **Balanced Security**: General apps, marketplaces (14-day max, 24-hour idle)  
-  - **Development Mode**: Testing, demos (30-day max, minimal security)
+- **`01-simple-wallet.tsx`** - Just wallet connection, no staking
+- **`02-optional-staking.tsx`** - Staking provides benefits but isn't required  
+- **`03-required-staking.tsx`** - Staking required for access
+- **`04-beginner-friendly.tsx`** - Full educational experience for crypto newcomers
 
-## Usage
+### `/advanced-features/` - Advanced Configuration Examples
+For complex setups and enterprise use:
 
-These examples are TypeScript React components that you can integrate into your application. 
+- **`multi-chain-auto.tsx`** - Multi-chain with automatic MPC contract selection
+- **`mpc-contract-demo.tsx`** - Detailed MPC contract configuration  
+- **`security-configurations.tsx`** - Production security settings
 
-**Note**: The import paths in these examples use the published package name `@vitalpointai/near-login`. If you're running these locally in development, you'll need to adjust the imports to use relative paths:
+### `/interactive-demos/` - Live Demonstrations
+Interactive demos you can run in the browser:
 
-```tsx
-// Published package (production)
-import { NEARLogin, useNEARLogin } from '@vitalpointai/near-login';
-import type { AuthConfig } from '@vitalpointai/near-login';
+- **`demo-showcase.tsx`** - Complete interactive playground
+- **`component-showcase.tsx`** - Individual component examples
 
-// Local development
-import { NEARLogin, useNEARLogin } from '../src';
-import type { AuthConfig } from '../src';
+## 🚀 Quick Start
+
+### Option 1: Interactive Demo (Recommended)
+```bash
+# Run from the project root directory
+cd /path/to/near-login-with-staking
+pnpm run dev
+# Then visit http://localhost:5177/examples/
 ```
 
-## Configuration
+### Option 2: Individual Examples
+Copy any `.tsx` file from the folders above into your React app and customize as needed.
 
-Each example includes a different configuration setup:
+## 📋 Examples by Use Case
 
-- **Wallet Only**: No validator specified, basic wallet connection
-- **Optional Staking**: `authMode: 'optional-staking'` with validator config
-- **Required Staking**: `authMode: 'required-staking'` with validator config
-- **Security Configurations**: Advanced `SessionSecurityConfig` examples for different security levels
+### **Just Need User Authentication?**
+→ Use `basic-usage/01-simple-wallet.tsx`
 
-### Security Configuration Examples
+### **Want to Incentivize Staking?** 
+→ Use `basic-usage/02-optional-staking.tsx`
 
-The `security-configurations.tsx` example demonstrates three security levels:
+### **Need Staking for Premium Features?**
+→ Use `basic-usage/03-required-staking.tsx`
 
-**High Security (Financial Applications):**
+### **Users New to Crypto?**
+→ Use `basic-usage/04-beginner-friendly.tsx`
+
+### **Need Multi-Chain Support?**
+→ Use `advanced-features/multi-chain-auto.tsx`
+
+### **Enterprise/Production Setup?**
+→ Use `advanced-features/security-configurations.tsx`
+
+## 🎯 Key Features Demonstrated
+
+- ✅ **Automatic MPC Contract Selection** - Mainnet/testnet contracts chosen automatically
+- ✅ **Educational Components** - Help tooltips and guides for crypto beginners  
+- ✅ **Flexible Staking** - Optional, required, or no staking configurations
+- ✅ **User Experience Modes** - Beginner vs experienced user interfaces
+- ✅ **Security Configurations** - Production-ready security settings
+- ✅ **Multi-Chain Support** - Cross-chain authentication with NEAR Chain Signatures
+
+## 🌐 Multi-Chain & MPC Contract Features
+
+### 🔄 Automatic MPC Contract Selection
+The library automatically selects the correct MPC contract based on your network:
+- **Mainnet**: Automatically uses `v1.signer`
+- **Testnet**: Automatically uses `v1.signer-prod.testnet`
+- **No manual configuration required** - just specify the network!
+
+### 🛠️ Override Capability
+- Developers can override with custom MPC contracts
+- Useful for testing or private MPC deployments
+- Access to `MPC_CONTRACTS` constants for manual configuration
+
+### 👤 Experience Modes
+- **Beginner Mode**: Full educational tooltips and guided experience
+- **Experienced Mode**: Streamlined interface for crypto veterans
+- **Bypass Option**: Quick authentication without educational overhead
+
+## 🔧 Configuration Quick Reference
+
 ```tsx
-const highSecurity: SessionSecurityConfig = {
-  maxAge: 7 * 24 * 60 * 60 * 1000,        // 7 days maximum
-  idleTimeout: 4 * 60 * 60 * 1000,        // 4 hours idle timeout
-  encryptStorage: true,                     // Always encrypt
-  deviceFingerprinting: true,               // Bind to device
-  validateInterval: 5 * 60 * 1000,         // Validate every 5 minutes
-  rotateTokens: true,                       // Rotate session tokens
-  requireReauth: 24 * 60 * 60 * 1000,      // Re-authenticate daily
-  secureStorage: true,                      // Use secure storage
-  preventConcurrent: true,                  // Single session only
-}
+// Basic wallet-only
+const config = {
+  nearConfig: { networkId: 'testnet' }
+};
+
+// With optional staking
+const config = {
+  nearConfig: { networkId: 'testnet' },
+  requireStaking: false,
+  validator: { poolId: 'your.pool.near', minStake: '1' }
+};
+
+// With required staking + educational features
+const config = {
+  nearConfig: { networkId: 'testnet' },
+  requireStaking: true,
+  validator: { poolId: 'your.pool.near', minStake: '5' }
+};
+
+// Multi-chain (MPC contract auto-selected)
+const config = {
+  nearConfig: { networkId: 'testnet' },
+  chainSignature: {
+    // contractId is automatically set based on networkId
+    supportedChains: ['ethereum', 'bitcoin']
+  }
+};
+
+// Custom MPC contract override
+const config = {
+  nearConfig: { networkId: 'testnet' },
+  chainSignature: {
+    contractId: 'my-custom-mpc.testnet', // Override default
+    supportedChains: ['ethereum', 'bitcoin']
+  }
+};
 ```
 
-**Balanced Security (General Applications):**
-```tsx
-const balancedSecurity: SessionSecurityConfig = {
-  maxAge: 14 * 24 * 60 * 60 * 1000,       // 14 days maximum
-  idleTimeout: 24 * 60 * 60 * 1000,       // 24 hours idle timeout
-  encryptStorage: true,                     // Encrypt session data
-  deviceFingerprinting: true,               // Basic device binding
-  validateInterval: 30 * 60 * 1000,        // Validate every 30 minutes
-  rotateTokens: false,                      // No token rotation
-}
+### Accessing MPC Contract Constants
+```typescript
+import { MPC_CONTRACTS } from '@vitalpointai/near-login';
+
+console.log(MPC_CONTRACTS.mainnet);  // 'v1.signer'
+console.log(MPC_CONTRACTS.testnet);  // 'v1.signer-prod.testnet'
 ```
 
-**Development Mode (Testing):**
-```tsx
-const devSecurity: SessionSecurityConfig = {
-  maxAge: 30 * 24 * 60 * 60 * 1000,       // 30 days maximum
-  idleTimeout: 7 * 24 * 60 * 60 * 1000,   // 7 days idle timeout
-  encryptStorage: false,                    // No encryption for debugging
-  deviceFingerprinting: false,              // No device binding
-  validateInterval: undefined,              // No validation intervals
-}
+## 💡 Pro Tips
+
+1. **Start Simple**: Begin with `01-simple-wallet.tsx` and add features as needed
+2. **Use Educational Mode**: Enable `showHelp` and `showEducation` for mainstream users
+3. **Test Networks**: Use `testnet` for development, `mainnet` for production
+4. **MPC Contracts**: Let the library auto-select - no need to hardcode contract IDs
+5. **Security**: Use settings from `security-configurations.tsx` for production apps
+
+## 🏗️ Architecture Benefits
+
+1. **Developer Experience**: No need to remember or look up MPC contract IDs
+2. **Maintenance**: Centralized contract ID management
+3. **Flexibility**: Easy to override for custom deployments
+4. **User Experience**: Automatic selection reduces configuration errors
+5. **Network Safety**: Prevents mainnet/testnet contract mixups
+
+## 🧪 Testing
+
+The examples include comprehensive tests for:
+- Automatic contract selection
+- Network-based routing
+- Custom contract overrides
+- User experience modes
+
+Run tests with:
+```bash
+pnpm test -- examples
 ```
 
-## Running Examples
+## 🎛️ Interactive Demo Features
 
-To test these examples:
+The interactive demos showcase:
 
-1. Install the package: `npm install @vitalpointai/near-login`
-2. Copy the example code into your React application
-3. Adjust the network configuration (`testnet` vs `mainnet`)  
-4. Update the validator pool ID if using staking examples
-5. Add your preferred toast notification library
+- **Demo Mode Selector**: Switch between different authentication configurations
+- **User Experience Toggle**: Choose between guided and expert experience
+- **Live Configuration Display**: See the exact props being passed to the widget
+- **Toast Notifications**: Simulated feedback for user actions
+- **Responsive Design**: Works on desktop and mobile
+- **Modern UI**: Clean, professional appearance with smooth animations
 
-## Toast Notifications
+## 📚 Real Implementation Example
 
-The examples use simple `alert()` calls for demonstrations. In production, you should integrate with a proper toast library like:
+```tsx
+import { NEARLogin } from '@vitalpointai/near-login';
 
-- [react-hot-toast](https://react-hot-toast.com/)
-- [sonner](https://sonner.emilkowal.ski/)
-- [react-toastify](https://fkhadra.github.io/react-toastify/)
+// Example: Required staking with guided experience
+<NEARLogin
+  stakingRequired={true}
+  showHelp={true}
+  helpTexts={{
+    walletConnection: "Connect your NEAR wallet to get started.",
+    staking: "This app requires staking to participate. Don't worry - we'll guide you through every step!",
+    stakingAmount: "Start with the minimum amount while you learn."
+  }}
+  showEducation={true}
+  educationTopics={['what-is-wallet', 'why-near', 'how-staking-works', 'security-tips']}
+  useGuidedStaking={true}
+  onToast={(toast) => {
+    showToast(toast.type, toast.title, toast.message);
+  }}
+>
+  <YourAppContent />
+</NEARLogin>
+```
 
-## Need Help?
+## 🎯 Key Learnings
 
-Check the main README.md for comprehensive documentation and API reference.
+From these examples, you can see how the same widget can be configured for vastly different user experiences:
+
+- **Beginners** get maximum guidance and education
+- **Experts** get streamlined, minimal interfaces  
+- **Optional features** can incentivize without requiring
+- **Educational content** dramatically improves Web3 onboarding
+- **Contextual help** reduces support burden
+
+The examples show why having configurable educational features is crucial for Web3 adoption - it allows the same component to serve both newcomers and experienced users effectively.
+
+## 💡 Use Cases
+
+These examples are perfect for:
+
+1. **Product Managers**: Understanding different user flows
+2. **Developers**: Seeing implementation examples
+3. **Designers**: Visualizing user experience variations
+4. **Stakeholders**: Demonstrating the widget's flexibility
+5. **Users**: Understanding what each mode provides
+
+---
+
+**Need help?** Check the main [README.md](../README.md) or open an issue on GitHub!
